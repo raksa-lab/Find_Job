@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+
+    <!-- This path draws your shape. The <text> element has been removed. -->
+    <path
+        android:fillColor="@color/find_job_primary"
+        android:pathData="M10,20 Q10,10 20,10 T30,20 T20,30 T10,20 Z" />
+
+</vector>
