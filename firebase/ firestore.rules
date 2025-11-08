@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userDoc().role == "admin";
+    }
+
+    // USERS
+    match /users/{userId} {
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow update: if isSignedIn() && (
+        (request.auth.uid == userId && !(request.resource.data.keys().hasAny(["role"]))) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // JOBS
+    match /jobs/{jobId} {
+      // Everyone can read active jobs
+      allow get, list: if resource.data.isActive == true;
+
+      // Only admin can manage
+      allow create, update, delete: if isAdmin();
+    }
+
+    // APPLICATIONS
+    match /applications/{appId} {
+      // Create: only job seeker (user)
+      allow create: if isSignedIn() && userDoc().role == "user" && request.auth.uid == request.resource.data.applicantUid;
+
+      // Read: admin or own application
+      allow read: if isSignedIn() && (isAdmin() || request.auth.uid == resource.data.applicantUid);
+
+      // Update status: admin only
+      allow update: if isAdmin();
+    }
+
+    // FAVORITES
+    match /users/{userId}/favorites/{favId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ADMIN AUDIT (optional)
+    match /admin_audit/{docId} {
+      allow read, create: if isAdmin();
+    }
+  }
+}
