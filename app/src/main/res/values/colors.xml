@@ -12,4 +12,9 @@
     <!-- Optional custom colors can also be defined here -->
     <color name="find_job_accent">#FF5722</color>
     <color name="find_job_error">#B00020</color>
+
+    <color name="purple_700">#6200EE</color>
+    <color name="purple_500">#9C27B0</color>
+    <color name="teal_700">#018786</color>
+
 </resources>
