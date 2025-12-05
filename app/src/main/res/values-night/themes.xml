@@ -1,20 +1,3 @@
 <resources>
-    <!-- Primary app brand colors -->
-    <color name="colorPrimary">#BB86FC</color>
-    <color name="colorPrimaryVariant">#3700B3</color>
-    <color name="colorSecondary">#03DAC6</color>
 
-    <!-- Background and surface -->
-    <color name="colorBackground">#121212</color>
-    <color name="colorSurface">#121212</color>
-
-    <!-- Text colors -->
-    <color name="colorOnPrimary">#000000</color>
-    <color name="colorOnSecondary">#000000</color>
-    <color name="colorOnBackground">#FFFFFF</color>
-    <color name="colorOnSurface">#FFFFFF</color>
-
-    <!-- Optional custom colors -->
-    <color name="colorAccent">#FF8A65</color>
-    <color name="colorError">#CF6679</color>
 </resources>

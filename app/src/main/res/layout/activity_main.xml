@@ -7,26 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/top_toolbar"
-        layout="@layout/toolbar_layout" />
-    <!-- This container will hold your fragments -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation" />
+  <include
+      android:id="@+id/top_toolbar"
+      layout="@layout/toolbar_layout" />
 
-    <!-- Your Bottom Navigation Bar -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/nav_bar"
-        app:labelVisibilityMode="labeled"
+  <!-- Fragment container must be placed BELOW toolbar -->
+  <FrameLayout
+      android:id="@+id/fragment_container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_below="@id/top_toolbar"
+      android:layout_above="@id/bottom_navigation" />
 
-        app:itemIconTint="@color/nav_item_color"
-        />
+  <!-- Bottom Navigation Bar -->
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottom_navigation"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      app:menu="@menu/nav_bar"
+      app:labelVisibilityMode="labeled"
+      app:itemIconTint="@color/nav_item_color"/>
 
 </RelativeLayout>
