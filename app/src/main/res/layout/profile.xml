@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".Profile">
 
-    <!-- Reusing the same structure again -->
+    <!-- Reusing theain -->
     <TextView
         android:id="@+id/fragment_title"
         android:layout_width="wrap_content"
