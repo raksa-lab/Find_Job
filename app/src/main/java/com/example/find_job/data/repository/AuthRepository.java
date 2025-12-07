@@ -13,34 +13,32 @@ import retrofit2.Response;
 
 public class AuthRepository {
 
-    private final serviceAPI api = RetrofitClient.getClient().create(serviceAPI.class);
+    private final serviceAPI api;
+
+    public AuthRepository() {
+        api = RetrofitClient.getClient().create(serviceAPI.class);
+    }
 
     public MutableLiveData<RegisterResponse> registerUser(RegisterRequest request) {
 
-        MutableLiveData<RegisterResponse> data = new MutableLiveData<>();
+        MutableLiveData<RegisterResponse> result = new MutableLiveData<>();
 
         api.register(request).enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    data.setValue(response.body());  // SUCCESS
+                    result.setValue(response.body());
                 } else {
-                    RegisterResponse error = new RegisterResponse();
-                    error.status = response.code();
-                    error.error = "Register failed";
-                    data.setValue(error); // RETURN ERROR
+                    result.setValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                RegisterResponse error = new RegisterResponse();
-                error.error = t.getMessage();
-                data.setValue(error); // NETWORK ERROR
+                result.setValue(null);
             }
         });
 
-        return data;
+        return result;
     }
 }
-

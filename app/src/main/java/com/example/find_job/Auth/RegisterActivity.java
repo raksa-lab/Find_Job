@@ -1,6 +1,5 @@
 package com.example.find_job.Auth;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,22 +44,14 @@ public class RegisterActivity extends AppCompatActivity {
 
             viewModel.register(name, email, password).observe(this, response -> {
 
-                if (response == null) {
-                    Toast.makeText(this, "Failed: empty server response", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!response.isSuccess()) {
-                    Toast.makeText(this, "Failed: " + response.error, Toast.LENGTH_SHORT).show();
+                if (response == null || response.uid == null) {
+                    Toast.makeText(this, "Registration failed!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-                finish(); // return to Login screen
+                finish();   // return to Login page
             });
-
-
-
         });
 
         tvLoginInstead.setOnClickListener(v -> finish());

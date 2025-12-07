@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
+    android:layout_marginTop="10dp"
     app:contentInsetStart="0dp"
     android:elevation="4dp"
-    android:background="?attr/colorSurface"> <!-- CHANGED: Use theme attribute for background -->
+    android:background="?attr/colorSurface">
 
     <!-- Use a ConstraintLayout as the direct child of the Toolbar -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,13 +30,13 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_logo"
-                app:tint="?attr/colorPrimary" /> <!-- CHANGED: Use theme attribute for tint -->
+                app:tint="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/iv_logo_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="4dp"
                 android:text="FindJob"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -54,11 +55,9 @@
             android:focusable="true"
             android:padding="8dp"
             android:src="@drawable/ic_login"
-            android:contentDescription="Login"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorPrimary" /> <!-- CHANGED: Use theme attribute for tint -->
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.appcompat.widget.Toolbar>

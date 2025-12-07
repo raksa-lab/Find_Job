@@ -1,5 +1,6 @@
 package com.example.find_job.ui.home;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,7 +22,7 @@ public class Home extends Fragment {
         View view = inflater.inflate(R.layout.home, container, false);
 
         // Find the title TextView that we added to home.xml
-        TextView title = view.findViewById(R.id.fragment_title);
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView title = view.findViewById(R.id.fragment_title);
         if (title != null) {
             title.setText("Home");
         } else {
