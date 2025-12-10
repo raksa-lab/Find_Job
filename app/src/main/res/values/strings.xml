@@ -4,4 +4,6 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
     <string name="job">Job</string>
+    <string name="company_logo">company_logo</string>
+    <string name="save_job">save_job</string>
 </resources>

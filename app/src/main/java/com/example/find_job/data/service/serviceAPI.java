@@ -15,7 +15,7 @@ public interface serviceAPI {
     @POST("api/auth/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @POST("api/auth/create-user")
+    @POST("api/auth/register")
     Call<RegisterResponse> register(@Body RegisterRequest request);
     @GET("api/jobs")
     Call<JobResponse> getAllJobs();

@@ -1,82 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    android:layout_margin="12dp"
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="4dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Using an ImageView for a company logo would be a good addition here -->
-        <!-- For now, we'll proceed with text-based info -->
-
+        <!-- Job Title -->
         <TextView
             android:id="@+id/tvJobTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Senior Android Developer (Kotlin)" />
-
-        <TextView
-            android:id="@+id/tvCompany"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvJobTitle"
-            tools:text="Awesome Tech Solutions Inc." />
-
-        <ImageView
-            android:id="@+id/ivLocationIcon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="8dp"
-            android:src="@android:drawable/ic_dialog_map"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCompany"
-            app:tint="@android:color/darker_gray" />
-
-        <TextView
-            android:id="@+id/tvLocation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="@android:color/black"
-            app:layout_constraintBottom_toBottomOf="@+id/ivLocationIcon"
-            app:layout_constraintEnd_toStartOf="@+id/tvSalary"
-            app:layout_constraintStart_toEndOf="@+id/ivLocationIcon"
-            app:layout_constraintTop_toTopOf="@+id/ivLocationIcon"
-            tools:text="Phnom Penh, Cambodia" />
-
-        <TextView
-            android:id="@+id/tvSalary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:text="UI/UX Designer"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvLocation"
-            tools:text="$1200 - $1500" />
+            android:textSize="18sp"
+            android:textColor="#1A1A1A" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Company + Location Row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Google"
+                android:textColor="#555"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" • "
+                android:textColor="#999"
+                android:textSize="14sp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp" />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="California, USA"
+                android:textColor="#777"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Salary + Job Type Tag Row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <!-- Salary -->
+            <TextView
+                android:id="@+id/tvSalary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$5000 / month"
+                android:textColor="#2196F3"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+
+            <!-- Spacer -->
+            <View
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <!-- Job Type Tag -->
+            <TextView
+                android:id="@+id/tvTagJobType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full-Time"
+                android:padding="6dp"
+                android:background="@drawable/tag_background"
+                android:textColor="#1565C0"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

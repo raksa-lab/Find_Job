@@ -37,7 +37,7 @@
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nabilla"
+                    android:text="User Name"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -45,7 +45,7 @@
                     android:id="@+id/user_position"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="UI/UX Designer"
+                    android:text="Your Role"
                     android:textSize="14sp"
                     android:textColor="#777" />
             </LinearLayout>
@@ -101,7 +101,7 @@
                 android:textSize="14sp" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 
@@ -119,7 +119,6 @@
                 android:paddingStart="6dp" />
         </LinearLayout>
 
-
         <!-- BLOG CARD -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -132,7 +131,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10 ways to increase your\nchances of getting hired"
+                android:text="10 ways to increase your
+chances of getting hired"
                 android:textSize="16sp"
                 android:textColor="#fff"
                 android:textStyle="bold" />
@@ -144,7 +144,6 @@
                 android:textSize="12sp"
                 android:layout_marginTop="12dp" />
         </LinearLayout>
-
 
         <!-- CURATED JOBS TITLE -->
         <TextView
@@ -204,61 +203,13 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-
-        <!-- JOB CARD EXAMPLE -->
-        <LinearLayout
+        <!-- JOB LIST FROM API -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHomeJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:padding="16dp"
-            android:background="@drawable/rounded_white"
-            android:elevation="4dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="UI Designer"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="InVision • Jakarta, Indonesia"
-                android:textColor="#777"
-                android:layout_marginTop="4dp"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Remote"
-                    android:background="@drawable/tag_bg"
-                    android:padding="6dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Junior"
-                    android:background="@drawable/tag_bg"
-                    android:padding="6dp"
-                    android:layout_marginStart="6dp"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3 days ago"
-                android:textSize="12sp"
-                android:textColor="#888"
-                android:layout_marginTop="8dp"/>
-        </LinearLayout>
+            android:nestedScrollingEnabled="false" />
 
     </LinearLayout>
 </ScrollView>

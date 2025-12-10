@@ -46,14 +46,14 @@ public class JobRepository {
                     return;
                 }
 
-                if (body.data == null) {
-                    Log.e("API_DEBUG", "DATA is null");
+                if (body.jobs == null) {
+                    Log.e("API_DEBUG", "JOBS IS NULL");
                     jobList.setValue(new ArrayList<>());
                     return;
                 }
 
-                Log.d("API_DEBUG", "Jobs received: " + body.data.size());
-                jobList.setValue(body.data);
+                Log.d("API_DEBUG", "Jobs received: " + body.jobs.size());
+                jobList.setValue(body.jobs);
             }
 
             @Override
@@ -66,3 +66,4 @@ public class JobRepository {
         return jobList;
     }
 }
+

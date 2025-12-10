@@ -1,5 +1,6 @@
 package com.example.find_job.ui.job_list;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.find_job.data.models.Job;
 
 import com.example.find_job.R;
 import com.example.find_job.adapters.JobAdapter;
+import com.example.find_job.ui.job_detail.JobDetailActivity;
 
 public class JobListFragment extends Fragment {
 
@@ -23,27 +26,42 @@ public class JobListFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_job_list, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.rvAllJobs);
-
-        // REQUIRED: layout manager
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         viewModel = new ViewModelProvider(requireActivity()).get(JobListViewModel.class);
 
         viewModel.getJobs().observe(getViewLifecycleOwner(), jobs -> {
+            if (jobs == null) return;
+
             if (jobAdapter == null) {
-                jobAdapter = new JobAdapter(jobs);
+                jobAdapter = new JobAdapter(jobs, job -> openJobDetail(job));
                 recyclerView.setAdapter(jobAdapter);
             }
         });
     }
+
+    private void openJobDetail(Job job) {
+        Intent i = new Intent(getActivity(), JobDetailActivity.class);
+        i.putExtra("jobId", job.id);
+        i.putExtra("title", job.title);
+        i.putExtra("company", job.company);
+        i.putExtra("location", job.location);
+        i.putExtra("description", job.description);
+        i.putExtra("salary", job.salary);
+        startActivity(i);
+    }
 }
+
