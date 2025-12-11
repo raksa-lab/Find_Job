@@ -6,4 +6,5 @@
     <string name="job">Job</string>
     <string name="company_logo">company_logo</string>
     <string name="save_job">save_job</string>
+    <string name="application">Application</string>
 </resources>

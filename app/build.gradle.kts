@@ -47,6 +47,8 @@ dependencies {
     // Shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+
     // Glide (Java project uses annotationProcessor)
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")

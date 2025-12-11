@@ -2,9 +2,9 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.Find_Job" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/find_job_primary</item>
-        <item name="colorPrimaryVariant">@color/find_job_primary_dark</item>
-        <item name="colorSecondary">@color/find_job_secondary</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorSecondary">@color/primary_light</item>
 
         <!-- Text colors that go ON TOP of the primary and secondary colors -->
         <item name="colorOnPrimary">@color/white</item>

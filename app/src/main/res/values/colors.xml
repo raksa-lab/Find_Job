@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Define your app's unique brand colors with unique names -->
-    <color name="find_job_primary">#6200EE</color>
-    <color name="find_job_primary_dark">#3700B3</color>
-    <color name="find_job_secondary">#03DAC6</color>
+    <color name="primary">#F97B00</color>
+    <color name="primary_dark">#f9f9f9</color>
+    <color name="primary_light">#ffd6ad</color>
 
     <!-- Standard colors can keep their names if not defined by a library -->
     <color name="black">#FF000000</color>
@@ -11,7 +11,7 @@
     <color name="gray">#626262</color>
 
     <!-- Optional custom colors can also be defined here -->
-    <color name="find_job_accent">#FF5722</color>
+    <color name="accent">#C5C5C5</color>
     <color name="find_job_error">#B00020</color>
     <!-- Brand Colors -->
     <color name="colorPrimary">#3F51B5</color>          <!-- Indigo Blue -->

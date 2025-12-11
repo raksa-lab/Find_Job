@@ -55,14 +55,14 @@
             android:layout_height="48dp"
             android:text="Register"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/find_job_primary" />
+            android:backgroundTint="@color/primary" />
 
         <TextView
             android:id="@+id/tvLoginInstead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Already have an account? Login"
-            android:textColor="@color/find_job_primary"
+            android:textColor="@color/primary"
             android:layout_marginTop="20dp" />
     </LinearLayout>
 
