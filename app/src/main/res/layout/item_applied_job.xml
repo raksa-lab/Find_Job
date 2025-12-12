@@ -21,12 +21,12 @@
             android:id="@+id/tvJobTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UI/UX Designer"
+            android:text="Job Title"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="#1A1A1A" />
 
-        <!-- Company + Location -->
+        <!-- Company & Location -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:id="@+id/tvCompany"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Google"
+                android:text="Company"
                 android:textColor="#555"
                 android:textSize="14sp" />
 
@@ -54,56 +54,20 @@
                 android:id="@+id/tvLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="California, USA"
+                android:text="Location"
                 android:textColor="#777"
                 android:textSize="14sp" />
-
         </LinearLayout>
 
-        <!-- Salary + Job Type -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:id="@+id/tvSalary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$5000 / month"
-                android:textColor="@color/primary"
-                android:textStyle="bold"
-                android:textSize="15sp" />
-
-            <View
-                android:layout_width="12dp"
-                android:layout_height="1dp" />
-
-            <TextView
-                android:id="@+id/tvTagJobType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Full-Time"
-                android:padding="6dp"
-                android:background="@drawable/tag_background"
-                android:textColor="@color/black"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <!-- REQUIREMENTS (NEW!) -->
+        <!-- Optional Remark -->
         <TextView
-            android:id="@+id/tvRequirementsSmall"
+            android:id="@+id/tvRemark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="Remark: —"
             android:textColor="#616161"
             android:textSize="13sp"
-            android:maxLines="1"
-            android:ellipsize="end"
             android:layout_marginTop="8dp" />
 
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

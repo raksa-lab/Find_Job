@@ -31,9 +31,14 @@
             android:name=".MainActivity"
             android:exported="true" />
 
-        <!-- ADD THIS -->
+        <!-- Job Detail Screen -->
         <activity
             android:name=".ui.job_detail.JobDetailActivity"
+            android:exported="false" />
+
+        <!-- ⭐ REQUIRED: Application list screen -->
+        <activity
+            android:name=".ui.application.AppliedJobsActivity"
             android:exported="false" />
 
     </application>

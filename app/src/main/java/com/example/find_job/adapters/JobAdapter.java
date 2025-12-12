@@ -40,6 +40,13 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         holder.location.setText(job.location);
         holder.salary.setText("$" + job.salary);
 
+        // Show first requirement
+        if (job.requirements != null && !job.requirements.isEmpty()) {
+            holder.requirementsSmall.setText("• " + job.requirements.get(0));
+        } else {
+            holder.requirementsSmall.setText("No requirements");
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onJobClick(job);
         });
@@ -55,7 +62,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     }
 
     public static class JobViewHolder extends RecyclerView.ViewHolder {
-        TextView title, company, location, salary;
+        TextView title, company, location, salary, requirementsSmall;
 
         public JobViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,6 +71,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             company = itemView.findViewById(R.id.tvCompany);
             location = itemView.findViewById(R.id.tvLocation);
             salary = itemView.findViewById(R.id.tvSalary);
+            requirementsSmall = itemView.findViewById(R.id.tvRequirementsSmall);
         }
     }
 }

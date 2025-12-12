@@ -20,7 +20,10 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="@color/primary"
             app:expandedTitleMarginStart="24dp"
-            app:expandedTitleMarginBottom="32dp">
+            app:expandedTitleMarginBottom="32dp"
+            app:titleEnabled="false">
+
+
 
             <!-- Gradient Background -->
             <View
@@ -361,7 +364,9 @@
                         android:layout_marginTop="16dp" />
 
                     <!-- Requirements -->
+                    <!-- Requirements Title -->
                     <TextView
+                        android:id="@+id/tvRequirementsTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Requirements"
@@ -370,77 +375,19 @@
                         android:textColor="#1A1A1A"
                         android:layout_marginTop="20dp" />
 
-                    <LinearLayout
+                    <!-- Dynamic Requirements Text -->
+                    <TextView
+                        android:id="@+id/tvRequirements"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="12dp">
+                        android:text=""
+                        android:textSize="14sp"
+                        android:textColor="#424242"
+                        android:lineSpacingExtra="6dp"
+                        android:layout_marginTop="12dp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="8dp">
 
-                            <View
-                                android:layout_width="6dp"
-                                android:layout_height="6dp"
-                                android:background="@drawable/bg_circle_accent"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginEnd="12dp" />
 
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="5+ years of product design experience"
-                                android:textSize="14sp"
-                                android:textColor="#424242" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="8dp">
-
-                            <View
-                                android:layout_width="6dp"
-                                android:layout_height="6dp"
-                                android:background="@drawable/bg_circle_accent"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginEnd="12dp" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Expert proficiency in Figma and design systems"
-                                android:textSize="14sp"
-                                android:textColor="#424242" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <View
-                                android:layout_width="6dp"
-                                android:layout_height="6dp"
-                                android:background="@drawable/bg_circle_accent"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginEnd="12dp" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Strong portfolio demonstrating UX/UI expertise"
-                                android:textSize="14sp"
-                                android:textColor="#424242" />
-                        </LinearLayout>
-                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

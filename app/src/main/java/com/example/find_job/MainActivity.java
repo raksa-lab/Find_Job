@@ -1,6 +1,7 @@
 package com.example.find_job;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,23 +28,34 @@ public class MainActivity extends AppCompatActivity {
         loadFragment(new Home()); // default page
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            Fragment fragment;
 
             if (item.getItemId() == R.id.menu_home) {
-                fragment = new Home();
+                loadFragment(new Home());
+                return true;
+
             } else if (item.getItemId() == R.id.menu_job) {
-                fragment = new JobListFragment();
-            } else if (item.getItemId() == R.id.menu_search) {
-                fragment = new SearchFragment();   // Create later
-            } else if (item.getItemId() == R.id.nav_profile) {
-                fragment = new ProfileFragment();
-            } else {
-                fragment = new Home();
+                loadFragment(new JobListFragment());
+                return true;
+
+            } else if (item.getItemId() == R.id.menu_application) {
+                // OPEN APPLICATION SCREEN
+                startActivity(new Intent(MainActivity.this, com.example.find_job.ui.application.AppliedJobsActivity.class));
+                return true;
+
+            }
+//            else if (item.getItemId() == R.id.menu_search) {
+//                loadFragment(new SearchFragment());
+//                return true;
+//            }
+            else if (item.getItemId() == R.id.nav_profile) {
+                loadFragment(new ProfileFragment());
+                return true;
             }
 
-            loadFragment(fragment);
-            return true;
+            return false;
         });
+
+
 
     }
 

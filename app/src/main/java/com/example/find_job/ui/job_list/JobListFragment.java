@@ -12,11 +12,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.find_job.data.models.Job;
 
 import com.example.find_job.R;
 import com.example.find_job.adapters.JobAdapter;
+import com.example.find_job.data.models.Job;
 import com.example.find_job.ui.job_detail.JobDetailActivity;
+
+import java.util.ArrayList;
 
 public class JobListFragment extends Fragment {
 
@@ -63,16 +65,20 @@ public class JobListFragment extends Fragment {
         i.putExtra("description", job.description);
         i.putExtra("salary", job.salary);
         i.putExtra("employmentType", job.employmentType);
-
-        // NEW FIELDS
         i.putExtra("status", job.status);
 
+        // Send createdAt timestamp (if exists)
         if (job.createdAt != null) {
             i.putExtra("createdAt_seconds", job.createdAt._seconds);
         }
 
+        ArrayList<String> reqList = new ArrayList<>();
+        if (job.requirements != null) {
+            reqList.addAll(job.requirements);
+        }
+        i.putStringArrayListExtra("requirements", reqList);
+
+
         startActivity(i);
     }
-
 }
-

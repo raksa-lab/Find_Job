@@ -13,6 +13,8 @@ import com.example.find_job.adapters.JobAdapter;
 import com.example.find_job.data.models.Job;
 import com.example.find_job.ui.job_detail.JobDetailActivity;
 
+import java.util.ArrayList;
+
 public class JobListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -37,13 +39,30 @@ public class JobListActivity extends AppCompatActivity {
 
     private void openJobDetail(Job job) {
         Intent i = new Intent(this, JobDetailActivity.class);
+
         i.putExtra("jobId", job.id);
         i.putExtra("title", job.title);
         i.putExtra("company", job.company);
         i.putExtra("location", job.location);
         i.putExtra("description", job.description);
         i.putExtra("salary", job.salary);
+        i.putExtra("employmentType", job.employmentType);
+        i.putExtra("status", job.status);
+
+        if (job.createdAt != null) {
+            i.putExtra("createdAt_seconds", job.createdAt._seconds);
+        }
+
+        // ⭐ SEND REQUIREMENTS ⭐
+        ArrayList<String> reqList = new ArrayList<>();
+        if (job.requirements != null) {
+            reqList.addAll(job.requirements);
+        }
+        i.putStringArrayListExtra("requirements", reqList);
+
         startActivity(i);
     }
+
+
 }
 
