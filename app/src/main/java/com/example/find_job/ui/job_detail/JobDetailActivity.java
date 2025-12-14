@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.find_job.R;
 import com.example.find_job.ui.application.AppliedJobsActivity;
@@ -35,17 +33,14 @@ public class JobDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_detail);
 
-        // Toolbar Setup
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // =========================
+        // BACK BUTTON (FROM XML)
+        // =========================
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
-            // IMPORTANT — hide title "findjob"
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-
+        // =========================
         // Bind UI
+        // =========================
         tvTitle = findViewById(R.id.tvTitle);
         tvCompany = findViewById(R.id.tvCompany);
         tvLocation = findViewById(R.id.tvLocation);
@@ -58,7 +53,9 @@ public class JobDetailActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         fabShare = findViewById(R.id.fabShare);
 
+        // =========================
         // Receive job data
+        // =========================
         Intent intent = getIntent();
         boolean openedFromApplied = intent.getBooleanExtra("fromApplied", false);
 
@@ -74,35 +71,43 @@ public class JobDetailActivity extends AppCompatActivity {
         int salary = intent.getIntExtra("salary", 0);
         tvSalaryAmount.setText(salary > 0 ? "$" + salary : "Negotiable");
 
+        // =========================
         // Requirements
+        // =========================
         ArrayList<String> reqList = intent.getStringArrayListExtra("requirements");
         if (reqList == null || reqList.isEmpty()) {
             tvRequirements.setText("No requirements listed.");
         } else {
             StringBuilder sb = new StringBuilder();
-            for (String r : reqList) sb.append("• ").append(r).append("\n");
+            for (String r : reqList) {
+                sb.append("• ").append(r).append("\n");
+            }
             tvRequirements.setText(sb.toString());
         }
 
-        // Hide Apply buttons if this job is already applied
+        // =========================
+        // Hide buttons if already applied
+        // =========================
         if (openedFromApplied) {
             btnApply.setVisibility(View.GONE);
             btnViewStatus.setVisibility(View.GONE);
         }
 
-        // Apply Button
+        // =========================
+        // Click actions
+        // =========================
         btnApply.setOnClickListener(v -> showApplyDialog());
 
-        // View Application Status
         btnViewStatus.setOnClickListener(v ->
                 startActivity(new Intent(this, AppliedJobsActivity.class))
         );
 
-        // Share Button
         fabShare.setOnClickListener(v -> shareJob());
     }
 
-    // Popup Dialog for applying
+    // =========================
+    // Apply Dialog
+    // =========================
     private void showApplyDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Apply for Job");
@@ -135,15 +140,10 @@ public class JobDetailActivity extends AppCompatActivity {
     private void shareJob() {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
-        share.putExtra(Intent.EXTRA_TEXT, "Check this job: " + jobTitle + " at " + jobCompany);
+        share.putExtra(
+                Intent.EXTRA_TEXT,
+                "Check this job: " + jobTitle + " at " + jobCompany
+        );
         startActivity(Intent.createChooser(share, "Share via"));
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
     }
 }

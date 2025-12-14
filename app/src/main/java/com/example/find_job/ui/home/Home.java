@@ -19,6 +19,7 @@ import com.example.find_job.data.models.Job;
 import com.example.find_job.ui.job_detail.JobDetailActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Home extends Fragment {
 
@@ -50,7 +51,14 @@ public class Home extends Fragment {
         viewModel.getJobs().observe(getViewLifecycleOwner(), jobs -> {
             if (jobs == null) return;
 
-            adapter = new JobAdapter(jobs, job -> openJobDetail(job));
+            // Limit to only 3 jobs
+            List<Job> limitedJobs = new ArrayList<>();
+            int limit = Math.min(jobs.size(), 3);
+            for (int i = 0; i < limit; i++) {
+                limitedJobs.add(jobs.get(i));
+            }
+
+            adapter = new JobAdapter(limitedJobs, job -> openJobDetail(job));
             rvHomeJobs.setAdapter(adapter);
         });
     }

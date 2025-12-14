@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 //                loadFragment(new SearchFragment());
 //                return true;
 //            }
-            else if (item.getItemId() == R.id.nav_profile) {
+            else if (item.getItemId() == R.id.appBarLayout) {
                 loadFragment(new ProfileFragment());
                 return true;
             }
