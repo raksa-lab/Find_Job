@@ -1,73 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="4dp"
-    android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <!-- Job Title -->
-        <TextView
-            android:id="@+id/tvJobTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Job Title"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="#1A1A1A" />
-
-        <!-- Company & Location -->
+        <!-- ================= TOP SECTION ================= -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp">
-
-            <TextView
-                android:id="@+id/tvCompany"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Company"
-                android:textColor="#555"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" • "
-                android:textColor="#999"
-                android:textSize="14sp"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp" />
-
-            <TextView
-                android:id="@+id/tvLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Location"
-                android:textColor="#777"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <!-- Optional Remark -->
-        <TextView
-            android:id="@+id/tvRemark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Remark: —"
-            android:textColor="#616161"
-            android:textSize="13sp"
-            android:layout_marginTop="8dp" />
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Job Title -->
+            <TextView
+                android:id="@+id/tvJobTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UI/UX Designer"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <!-- Company • Location -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
+
+                <TextView
+                    android:id="@+id/tvCompany"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Google"
+                    android:textColor="#616161"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • "
+                    android:textColor="#BDBDBD"
+                    android:textSize="14sp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp" />
+
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="California, USA"
+                    android:textColor="#757575"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Tags: Salary + Job Type -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="14dp">
+
+                <!-- Salary Tag -->
+                <TextView
+                    android:id="@+id/tvSalary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$5000 / month"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#2E7D32"
+                    android:background="@drawable/bg_tag_salary"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Job Type Tag -->
+                <TextView
+                    android:id="@+id/tvJobType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full-Time"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#6C63FF"
+                    android:background="@drawable/bg_tag_job_type"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ================= DIVIDER ================= -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp" />
+
+        <!-- ================= BOTTOM SECTION ================= -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Requirements -->
+            <TextView
+                android:id="@+id/tvRequirementsSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Figma • User Research • Wireframing"
+                android:textColor="#616161"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- Remark -->
+            <TextView
+                android:id="@+id/tvRemark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remark: —"
+                android:textColor="#9E9E9E"
+                android:textSize="12sp"
+                android:layout_marginTop="6dp" />
+        </LinearLayout>
+
+        <!-- ================= ACCENT BAR ================= -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/gradient_accent_bar" />
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</com.google.android.material.card.MaterialCardView>

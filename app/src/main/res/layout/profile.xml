@@ -286,7 +286,7 @@
                 android:orientation="horizontal"
                 android:weightSum="3">
 
-                <!-- My Applications -->
+                <!-- Add New Job -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_applications"
                     android:layout_width="0dp"
@@ -316,7 +316,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Applications"
+                            android:text="Add New Job"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#6C63FF"
@@ -366,7 +366,7 @@
 
                 <!-- Resume -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_resume"
+                    android:id="@+id/card_CV"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
@@ -378,6 +378,7 @@
                     android:foreground="?attr/selectableItemBackground">
 
                     <LinearLayout
+                        android:id="@+id/btnCV"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
@@ -393,7 +394,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Resume"
+                            android:text="My CV"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#FF9800"

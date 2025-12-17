@@ -5,24 +5,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.find_job.Auth.LoginActivity;
 import com.example.find_job.R;
+import com.example.find_job.ui.jobs.AddJobActivity;
+import com.example.find_job.ui.saved.SavedJobsActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class ProfileFragment extends Fragment {
 
-    // Header buttons
-    private FrameLayout btnBack, btnMore, btnEditPhoto;
+    // ===============================
+    // Activity Result Launcher
+    // ===============================
+    private ActivityResultLauncher<Intent> addJobLauncher;
 
     // Profile info
     private ImageView ivProfile;
@@ -35,11 +40,14 @@ public class ProfileFragment extends Fragment {
     private MaterialButton btnEditProfile, btnLogout;
 
     // Quick actions
-    private View cardApplications, cardSaved, cardResume;
+    private View cardApplications, cardSaved, cardCV;
 
     // Settings
     private LinearLayout menuAccount, menuNotifications, menuPrivacy, menuHelp;
 
+    // ===============================
+    // Lifecycle
+    // ===============================
     @Nullable
     @Override
     public View onCreateView(
@@ -50,6 +58,7 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.profile, container, false);
 
         bindViews(view);
+        setupActivityResult();
         setupClickListeners();
         loadUserData();
 
@@ -57,12 +66,24 @@ public class ProfileFragment extends Fragment {
     }
 
     // ===============================
-    // Bind XML Views
+    // Register Activity Result
+    // ===============================
+    private void setupActivityResult() {
+        addJobLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == requireActivity().RESULT_OK) {
+                        showToast("Job list updated");
+                        // TODO: refresh job list if needed
+                    }
+                }
+        );
+    }
+
+    // ===============================
+    // Bind Views
     // ===============================
     private void bindViews(View view) {
-
-
-        btnEditPhoto = view.findViewById(R.id.btn_edit_photo);
 
         ivProfile = view.findViewById(R.id.iv_profile_image);
         tvName = view.findViewById(R.id.tv_user_name);
@@ -79,7 +100,7 @@ public class ProfileFragment extends Fragment {
 
         cardApplications = view.findViewById(R.id.card_applications);
         cardSaved = view.findViewById(R.id.card_saved);
-        cardResume = view.findViewById(R.id.card_resume);
+        cardCV = view.findViewById(R.id.card_CV);
 
         menuAccount = view.findViewById(R.id.menu_account);
         menuNotifications = view.findViewById(R.id.menu_notifications);
@@ -88,31 +109,31 @@ public class ProfileFragment extends Fragment {
     }
 
     // ===============================
-    // Click Actions
+    // Click Listeners
     // ===============================
     private void setupClickListeners() {
 
+        // Add Job
+        cardApplications.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), AddJobActivity.class);
+            addJobLauncher.launch(intent);
+        });
 
+        // Saved Jobs
+        cardSaved.setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), SavedJobsActivity.class))
+        );
 
-        btnEditPhoto.setOnClickListener(v ->
-                showToast("Change profile photo")
+        // CV
+        cardCV.setOnClickListener(v ->
+                showToast("CV")
         );
 
         btnEditProfile.setOnClickListener(v ->
                 showToast("Edit profile")
         );
 
-        cardApplications.setOnClickListener(v ->
-                showToast("My applications")
-        );
-
-        cardSaved.setOnClickListener(v ->
-                showToast("Saved jobs")
-        );
-
-        cardResume.setOnClickListener(v ->
-                showToast("My resume")
-        );
+        btnLogout.setOnClickListener(v -> logoutUser());
 
         menuAccount.setOnClickListener(v ->
                 showToast("Account settings")
@@ -129,32 +150,27 @@ public class ProfileFragment extends Fragment {
         menuHelp.setOnClickListener(v ->
                 showToast("Help & support")
         );
-
-        btnLogout.setOnClickListener(v -> {
-            logoutUser();
-        });
-
     }
+
+    // ===============================
+    // Logout
+    // ===============================
     private void logoutUser() {
 
-        // 1. Clear login/session data
         requireActivity()
-                .getSharedPreferences("USER_SESSION", getContext().MODE_PRIVATE)
+                .getSharedPreferences("USER_SESSION", requireContext().MODE_PRIVATE)
                 .edit()
                 .clear()
                 .apply();
 
-        // 2. Navigate to Login screen
         Intent intent = new Intent(requireContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
-        // 3. Close current activity
         requireActivity().finish();
     }
 
     // ===============================
-    // Load User Data (Mock)
+    // Mock Data (Replace with API)
     // ===============================
     private void loadUserData() {
 
@@ -171,6 +187,9 @@ public class ProfileFragment extends Fragment {
         );
     }
 
+    // ===============================
+    // Toast Helper
+    // ===============================
     private void showToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }

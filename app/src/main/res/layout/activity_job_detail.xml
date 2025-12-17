@@ -134,12 +134,15 @@
 
                     <!-- Tags -->
                     <LinearLayout
+                        android:id="@+id/layoutTags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="16dp">
 
+                        <!-- WORK TYPE -->
                         <TextView
+                            android:id="@+id/tvTagWorkType"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Remote"
@@ -152,7 +155,9 @@
                             android:paddingBottom="6dp"
                             android:fontFamily="sans-serif-medium" />
 
+                        <!-- EMPLOYMENT TYPE -->
                         <TextView
+                            android:id="@+id/tvEmploymentType"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Full-time"
@@ -166,7 +171,9 @@
                             android:layout_marginStart="8dp"
                             android:fontFamily="sans-serif-medium" />
 
+                        <!-- EXPERIENCE LEVEL -->
                         <TextView
+                            android:id="@+id/tvExperienceLevel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Senior"
@@ -180,6 +187,7 @@
                             android:layout_marginStart="8dp"
                             android:fontFamily="sans-serif-medium" />
                     </LinearLayout>
+
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

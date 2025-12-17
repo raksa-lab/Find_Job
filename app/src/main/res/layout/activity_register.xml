@@ -51,13 +51,6 @@
                     android:paddingStart="32dp"
                     android:paddingEnd="32dp">
 
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_user_add"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_circle_white"
-                        app:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -86,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginTop="-50dp"
+                android:layout_marginTop="-40dp"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="16dp"
                 app:cardBackgroundColor="#FFFFFF">
@@ -97,44 +90,9 @@
                     android:orientation="vertical"
                     android:padding="32dp">
 
-                    <!-- Progress Indicator -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        android:layout_marginBottom="24dp">
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/progress_active"
-                            android:layout_marginEnd="4dp" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/progress_inactive"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginEnd="4dp" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/progress_inactive"
-                            android:layout_marginStart="4dp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Step 1 of 3"
-                        android:textSize="13sp"
-                        android:textColor="#9E9E9E"
-                        android:layout_marginBottom="8dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -264,63 +222,10 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="16dp">
 
-                        <View
-                            android:id="@+id/strength1"
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="#E0E0E0"
-                            android:layout_marginEnd="4dp" />
 
-                        <View
-                            android:id="@+id/strength2"
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="#E0E0E0"
-                            android:layout_marginEnd="4dp" />
-
-                        <View
-                            android:id="@+id/strength3"
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="#E0E0E0"
-                            android:layout_marginEnd="4dp" />
-
-                        <View
-                            android:id="@+id/strength4"
-                            android:layout_width="0dp"
-                            android:layout_height="4dp"
-                            android:layout_weight="1"
-                            android:background="#E0E0E0" />
                     </LinearLayout>
 
-                    <!-- Terms and Conditions -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="20dp">
 
-                        <com.google.android.material.checkbox.MaterialCheckBox
-                            android:id="@+id/cbTerms"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:buttonTint="#6C63FF" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textSize="13sp"
-                            android:textColor="#757575"
-                            android:layout_marginStart="4dp">
-
-                        </TextView>
-                    </LinearLayout>
 
                     <!-- Register Button -->
                     <com.google.android.material.button.MaterialButton

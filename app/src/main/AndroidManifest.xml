@@ -35,11 +35,14 @@
         <activity
             android:name=".ui.job_detail.JobDetailActivity"
             android:exported="false" />
-
-        <!-- ⭐ REQUIRED: Application list screen -->
         <activity
-            android:name=".ui.application.AppliedJobsActivity"
+            android:name=".ui.jobs.AddJobActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.saved.SavedJobsActivity"
+            android:exported="false" />
+
+
 
     </application>
 
