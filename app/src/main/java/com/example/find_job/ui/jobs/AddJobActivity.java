@@ -5,17 +5,20 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.find_job.R;
 import com.example.find_job.data.models.JobRequest;
 import com.example.find_job.data.repository.JobRepository;
+import com.example.find_job.ui.base.BaseAdminActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AddJobActivity extends AppCompatActivity {
+public class AddJobActivity extends BaseAdminActivity {
 
     private TextInputEditText etJobTitle;
     private TextInputEditText etDescription;
@@ -35,18 +38,12 @@ public class AddJobActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_job);
 
-        jobRepository = new JobRepository();
+        jobRepository = new JobRepository(this);
 
-        // Initialize views
+
         initViews();
-
-        // Setup dropdowns
         setupDropdowns();
-
-        // Setup click listeners
         setupClickListeners();
-
-        // Load draft if exists
         loadDraft();
     }
 
@@ -62,71 +59,58 @@ public class AddJobActivity extends AppCompatActivity {
         btnSubmitJob = findViewById(R.id.btnSubmitJob);
         btnSaveDraft = findViewById(R.id.btnSaveDraft);
 
-        // Back button
         findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
     }
 
     private void setupDropdowns() {
-        // Job Type Dropdown
         String[] jobTypes = {"Full-Time", "Part-Time", "Contract", "Internship", "Freelance"};
-        ArrayAdapter<String> jobTypeAdapter = new ArrayAdapter<>(
+        etJobType.setAdapter(new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
                 jobTypes
-        );
-        etJobType.setAdapter(jobTypeAdapter);
-        etJobType.setText("Full-Time", false); // Set default
+        ));
+        etJobType.setText("Full-Time", false);
 
-        // Experience Level Dropdown
-        String[] experienceLevels = {"Entry Level", "Junior", "Mid-Level", "Senior", "Lead", "Executive"};
-        ArrayAdapter<String> experienceAdapter = new ArrayAdapter<>(
+        String[] experienceLevels = {
+                "Entry Level", "Junior", "Mid-Level", "Senior", "Lead", "Executive"
+        };
+        etExperience.setAdapter(new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
                 experienceLevels
-        );
-        etExperience.setAdapter(experienceAdapter);
-        etExperience.setText("Mid-Level", false); // Set default
+        ));
+        etExperience.setText("Mid-Level", false);
     }
 
     private void setupClickListeners() {
-        // Submit Job Button
         btnSubmitJob.setOnClickListener(v -> {
-            if (validateForm()) {
-                submitJob();
-            }
+            if (validateForm()) submitJob();
         });
 
-        // Save Draft Button
-        btnSaveDraft.setOnClickListener(v -> {
-            saveDraft();
-        });
+        btnSaveDraft.setOnClickListener(v -> saveDraft());
     }
 
     private boolean validateForm() {
         boolean isValid = true;
 
-        // Validate Job Title
         if (etJobTitle.getText().toString().trim().isEmpty()) {
             etJobTitle.setError("Job title is required");
             etJobTitle.requestFocus();
             isValid = false;
         }
 
-        // Validate Company
         if (etCompany.getText().toString().trim().isEmpty()) {
             etCompany.setError("Company name is required");
             if (isValid) etCompany.requestFocus();
             isValid = false;
         }
 
-        // Validate Location
         if (etLocation.getText().toString().trim().isEmpty()) {
             etLocation.setError("Location is required");
             if (isValid) etLocation.requestFocus();
             isValid = false;
         }
 
-        // Validate Description
         if (etDescription.getText().toString().trim().isEmpty()) {
             etDescription.setError("Job description is required");
             if (isValid) etDescription.requestFocus();
@@ -137,31 +121,9 @@ public class AddJobActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        // Validate Salary
         if (etSalary.getText().toString().trim().isEmpty()) {
             etSalary.setError("Salary is required");
             if (isValid) etSalary.requestFocus();
-            isValid = false;
-        }
-
-        // Validate Job Type
-        if (etJobType.getText().toString().trim().isEmpty()) {
-            etJobType.setError("Job type is required");
-            if (isValid) etJobType.requestFocus();
-            isValid = false;
-        }
-
-        // Validate Experience Level
-        if (etExperience.getText().toString().trim().isEmpty()) {
-            etExperience.setError("Experience level is required");
-            if (isValid) etExperience.requestFocus();
-            isValid = false;
-        }
-
-        // Validate Requirements
-        if (etRequirements.getText().toString().trim().isEmpty()) {
-            etRequirements.setError("Requirements are required");
-            if (isValid) etRequirements.requestFocus();
             isValid = false;
         }
 
@@ -173,109 +135,74 @@ public class AddJobActivity extends AppCompatActivity {
     }
 
     private void submitJob() {
-        String title = etJobTitle.getText().toString().trim();
-        String description = etDescription.getText().toString().trim();
-        String company = etCompany.getText().toString().trim();
-        String location = etLocation.getText().toString().trim();
-        String salaryText = etSalary.getText().toString().trim();
-        String requirementsText = etRequirements.getText().toString().trim();
-        String jobType = etJobType.getText().toString().trim();
-
-        int salary;
-        try {
-            salary = Integer.parseInt(salaryText);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Salary must be a number", Toast.LENGTH_SHORT).show();
-            etSalary.setError("Invalid salary");
-            etSalary.requestFocus();
-            return;
-        }
-
-        // Create job request
         JobRequest job = new JobRequest();
-        job.title = title;
-        job.description = description;
-        job.company = company;
-        job.location = location;
-        job.salary = salary;
 
-        // Parse requirements (split by newline)
-        job.requirements = requirementsText.isEmpty()
+        job.title = etJobTitle.getText().toString().trim();
+        job.description = etDescription.getText().toString().trim();
+        job.company = etCompany.getText().toString().trim();
+        job.location = etLocation.getText().toString().trim();
+        job.salary = Integer.parseInt(etSalary.getText().toString().trim());
+
+        job.requirements = etRequirements.getText().toString().trim().isEmpty()
                 ? new ArrayList<>()
-                : Arrays.asList(requirementsText.split("\\n"));
+                : Arrays.asList(etRequirements.getText().toString().split("\\n"));
 
-        // Convert job type to backend format
-        job.employmentType = convertJobTypeToBackend(jobType);
+        job.employmentType = convertJobTypeToBackend(
+                etJobType.getText().toString().trim()
+        );
 
-        // Add tags based on experience level or job type (customize as needed)
         job.tags = Arrays.asList(job.employmentType, "hiring");
 
-        // REQUIRED by backend
-        job.createdBy = "user_demo_20"; // TODO: Replace with actual user ID
+        job.createdBy = "admin"; // should come from SessionManager
 
-        // Show loading
         btnSubmitJob.setEnabled(false);
         btnSubmitJob.setText("Posting...");
 
-        jobRepository.addJob(job, success -> {
+        jobRepository.addJob(job, success -> runOnUiThread(() -> {
+            btnSubmitJob.setEnabled(true);
+            btnSubmitJob.setText("Post Job");
 
-            runOnUiThread(() -> {
-                btnSubmitJob.setEnabled(true);
-                btnSubmitJob.setText("Post Job");
-
-                if (success) {
-                    Toast.makeText(this, "Job posted successfully!", Toast.LENGTH_SHORT).show();
-                    clearDraft(); // Clear saved draft
-                    setResult(RESULT_OK);
-                    finish();
-                } else {
-                    Toast.makeText(this, "Failed to post job. Please try again.", Toast.LENGTH_LONG).show();
-                }
-            });
-        });
+            if (success) {
+                Toast.makeText(this, "Job posted successfully!", Toast.LENGTH_SHORT).show();
+                clearDraft();
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to post job.", Toast.LENGTH_LONG).show();
+            }
+        }));
     }
 
     private String convertJobTypeToBackend(String jobType) {
         switch (jobType) {
-            case "Full-Time":
-                return "full-time";
-            case "Part-Time":
-                return "part-time";
-            case "Contract":
-                return "contract";
-            case "Internship":
-                return "internship";
-            case "Freelance":
-                return "freelance";
-            default:
-                return "full-time";
+            case "Part-Time": return "part-time";
+            case "Contract": return "contract";
+            case "Internship": return "internship";
+            case "Freelance": return "freelance";
+            default: return "full-time";
         }
     }
 
     private void saveDraft() {
         SharedPreferences prefs = getSharedPreferences("job_drafts", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+        prefs.edit()
+                .putString("draft_title", etJobTitle.getText().toString())
+                .putString("draft_description", etDescription.getText().toString())
+                .putString("draft_company", etCompany.getText().toString())
+                .putString("draft_location", etLocation.getText().toString())
+                .putString("draft_salary", etSalary.getText().toString())
+                .putString("draft_job_type", etJobType.getText().toString())
+                .putString("draft_experience", etExperience.getText().toString())
+                .putString("draft_requirements", etRequirements.getText().toString())
+                .apply();
 
-        editor.putString("draft_title", etJobTitle.getText().toString().trim());
-        editor.putString("draft_description", etDescription.getText().toString().trim());
-        editor.putString("draft_company", etCompany.getText().toString().trim());
-        editor.putString("draft_location", etLocation.getText().toString().trim());
-        editor.putString("draft_salary", etSalary.getText().toString().trim());
-        editor.putString("draft_job_type", etJobType.getText().toString().trim());
-        editor.putString("draft_experience", etExperience.getText().toString().trim());
-        editor.putString("draft_requirements", etRequirements.getText().toString().trim());
-
-        editor.apply();
-
-        Toast.makeText(this, "Draft saved successfully!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Draft saved", Toast.LENGTH_SHORT).show();
     }
 
     private void loadDraft() {
         SharedPreferences prefs = getSharedPreferences("job_drafts", MODE_PRIVATE);
-
-        String title = prefs.getString("draft_title", "");
-        if (!title.isEmpty()) {
-            etJobTitle.setText(title);
+        if (!prefs.getString("draft_title", "").isEmpty()) {
+            etJobTitle.setText(prefs.getString("draft_title", ""));
             etDescription.setText(prefs.getString("draft_description", ""));
             etCompany.setText(prefs.getString("draft_company", ""));
             etLocation.setText(prefs.getString("draft_location", ""));
@@ -283,29 +210,24 @@ public class AddJobActivity extends AppCompatActivity {
             etJobType.setText(prefs.getString("draft_job_type", "Full-Time"), false);
             etExperience.setText(prefs.getString("draft_experience", "Mid-Level"), false);
             etRequirements.setText(prefs.getString("draft_requirements", ""));
-
-            Toast.makeText(this, "Draft loaded", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void clearDraft() {
-        SharedPreferences prefs = getSharedPreferences("job_drafts", MODE_PRIVATE);
-        prefs.edit().clear().apply();
+        getSharedPreferences("job_drafts", MODE_PRIVATE).edit().clear().apply();
     }
 
     @Override
     public void onBackPressed() {
-        // Check if form has unsaved changes
         if (hasUnsavedChanges()) {
-            // Show confirmation dialog
             new AlertDialog.Builder(this)
                     .setTitle("Discard Changes?")
-                    .setMessage("You have unsaved changes. Do you want to save them as a draft?")
-                    .setPositiveButton("Discard", (dialog, which) -> {
+                    .setMessage("Save draft before leaving?")
+                    .setPositiveButton("Discard", (d, w) -> {
                         clearDraft();
                         super.onBackPressed();
                     })
-                    .setNegativeButton("Save Draft", (dialog, which) -> {
+                    .setNegativeButton("Save Draft", (d, w) -> {
                         saveDraft();
                         super.onBackPressed();
                     })
@@ -317,11 +239,7 @@ public class AddJobActivity extends AppCompatActivity {
     }
 
     private boolean hasUnsavedChanges() {
-        return !etJobTitle.getText().toString().trim().isEmpty() ||
-                !etDescription.getText().toString().trim().isEmpty() ||
-                !etCompany.getText().toString().trim().isEmpty() ||
-                !etLocation.getText().toString().trim().isEmpty() ||
-                !etSalary.getText().toString().trim().isEmpty() ||
-                !etRequirements.getText().toString().trim().isEmpty();
+        return !etJobTitle.getText().toString().isEmpty()
+                || !etDescription.getText().toString().isEmpty();
     }
 }

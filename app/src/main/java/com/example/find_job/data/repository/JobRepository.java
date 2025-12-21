@@ -1,5 +1,6 @@
 package com.example.find_job.data.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -19,14 +20,17 @@ import retrofit2.Response;
 
 public class JobRepository {
 
-    private serviceAPI api;
+    private final serviceAPI api;
 
-    public JobRepository() {
-        api = RetrofitClient.getClient().create(serviceAPI.class);
+    // ✅ CONTEXT REQUIRED
+    public JobRepository(Context context) {
+        api = RetrofitClient
+                .getClient(context)
+                .create(serviceAPI.class);
     }
 
     // ===============================
-    // GET ALL JOBS (Already Working)
+    // GET ALL JOBS
     // ===============================
     public MutableLiveData<List<Job>> fetchJobs() {
 
@@ -34,8 +38,10 @@ public class JobRepository {
 
         api.getAllJobs().enqueue(new Callback<JobResponse>() {
             @Override
-            public void onResponse(Call<JobResponse> call, Response<JobResponse> response) {
-
+            public void onResponse(
+                    Call<JobResponse> call,
+                    Response<JobResponse> response
+            ) {
                 if (!response.isSuccessful() || response.body() == null) {
                     Log.e("API_DEBUG", "Failed to fetch jobs");
                     jobList.setValue(new ArrayList<>());
@@ -56,30 +62,21 @@ public class JobRepository {
     }
 
     // ===============================
-    // ADD NEW JOB (NEW)
+    // ADD NEW JOB (ADMIN ONLY)
     // ===============================
     public void addJob(JobRequest jobRequest, AddJobCallback callback) {
 
-        // ⚠️ TEMP: hardcoded admin token (replace with real one)
-        String adminToken = "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4MTFiMDdmMjhiODQxZjRiNDllNDgyNTg1ZmQ2NmQ1NWUzOGRiNWQiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiU3lzdGVtIEFkbWluaXN0cmF0b3IiLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vam9iLXBvcnRhbC0yMjQ2YSIsImF1ZCI6ImpvYi1wb3J0YWwtMjI0NmEiLCJhdXRoX3RpbWUiOjE3NjU5NTI5MzAsInVzZXJfaWQiOiJidWxQNzJjS0lmU0p3ZVd4djJNNm1NTXREQUQyIiwic3ViIjoiYnVsUDcyY0tJZlNKd2VXeHYyTTZtTU10REFEMiIsImlhdCI6MTc2NTk1MjkzMCwiZXhwIjoxNzY1OTU2NTMwLCJlbWFpbCI6ImFkbWluQGpvYnBvcnRhbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYWRtaW5Aam9icG9ydGFsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.ondrQ79MLZppYObPIdtAM0WWucewed4SvPN08nQ8Lja3_73LlPLCozT9ZMM9G8v1MzYKdBMj8DWg6BejOietesTqYytZ74eyvWgIcSfNq6BzyUoqKMjyY12ezfPULrNlCyy0R4kkZMOR_lDwvnArEeyi34mJovQxhYGIZ0Q2jJE4hBn6WAcDzmtsk5-haEhxlb-_xRxy17vLV_BJbj2uG6dukq8ohRSka1DCXRdKaKMdlkGD7UdtxvgMU368xiDX97Hnov2gRKPwNWlxbt1JWJSgFRNpysRaOsXnjwI1n6-Z2K2clZdQXUFJ4wv4xl4OsX9wm6bEUbIof7ep_ePvIw";
-
-        api.addJob(adminToken, jobRequest).enqueue(new Callback<JobResponse>() {
+        // ✅ TOKEN IS AUTO-ATTACHED BY INTERCEPTOR
+        api.addJob(jobRequest).enqueue(new Callback<JobResponse>() {
             @Override
-            public void onResponse(Call<JobResponse> call, Response<JobResponse> response) {
+            public void onResponse(
+                    Call<JobResponse> call,
+                    Response<JobResponse> response
+            ) {
 
-                Log.e("ADD_JOB", "HTTP CODE: " + response.code());
+                Log.d("ADD_JOB", "HTTP CODE: " + response.code());
 
-                if (response.isSuccessful()) {
-                    callback.onResult(true);
-                } else {
-                    try {
-                        if (response.errorBody() != null) {
-                            Log.e("ADD_JOB", "ERROR BODY: " + response.errorBody().string());
-                        }
-                    } catch (Exception ignored) {}
-
-                    callback.onResult(false);
-                }
+                callback.onResult(response.isSuccessful());
             }
 
             @Override
@@ -90,10 +87,8 @@ public class JobRepository {
         });
     }
 
-
-
     // ===============================
-    // Callback Interface
+    // CALLBACK
     // ===============================
     public interface AddJobCallback {
         void onResult(boolean success);

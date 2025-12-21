@@ -1,5 +1,6 @@
 package com.example.find_job.ui.application;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,14 +10,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.find_job.Auth.LoginActivity;
 import com.example.find_job.R;
 import com.example.find_job.adapters.AppliedJobAdapter;
 import com.example.find_job.data.models.Job;
 import com.example.find_job.data.repository.JobRepository;
+import com.example.find_job.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,26 @@ public class AppliedJobsFragment extends Fragment {
     private AppliedJobAdapter adapter;
     private JobRepository repository;
 
+    // 🔐 ROUTE PROTECTION (LOGIN + JOB SEEKER ONLY)
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        SessionManager sessionManager = new SessionManager(requireContext());
+
+        // Not logged in → redirect
+        if (!sessionManager.isLoggedIn()) {
+            startActivity(new Intent(requireContext(), LoginActivity.class));
+            requireActivity().finish();
+            return;
+        }
+
+        // Admin should NOT access applied jobs
+        if (sessionManager.isAdmin()) {
+            requireActivity().finish();
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(
@@ -42,7 +64,8 @@ public class AppliedJobsFragment extends Fragment {
         rv = view.findViewById(R.id.rvAppliedJobs);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        repository = new JobRepository();
+        repository = new JobRepository(requireContext());
+
 
         loadAppliedJobs();
 

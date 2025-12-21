@@ -1,5 +1,7 @@
 package com.example.find_job.data.repository;
 
+import android.content.Context;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.find_job.data.models.LoginRequest;
@@ -13,10 +15,12 @@ import retrofit2.Response;
 
 public class LoginRepository {
 
-    private serviceAPI api;
+    private final serviceAPI api;
 
-    public LoginRepository() {
-        api = RetrofitClient.getClient().create(serviceAPI.class);
+    public LoginRepository(Context context) {
+        api = RetrofitClient
+                .getClient(context)
+                .create(serviceAPI.class);
     }
 
     public MutableLiveData<LoginResponse> login(String email, String password) {
@@ -27,7 +31,10 @@ public class LoginRepository {
 
         api.login(request).enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(
+                    Call<LoginResponse> call,
+                    Response<LoginResponse> response
+            ) {
                 if (response.isSuccessful() && response.body() != null) {
                     data.setValue(response.body());
                 } else {
@@ -44,4 +51,3 @@ public class LoginRepository {
         return data;
     }
 }
-

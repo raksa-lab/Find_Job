@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,14 +13,16 @@ import com.example.find_job.R;
 import com.example.find_job.adapters.JobAdapter;
 import com.example.find_job.data.models.Job;
 import com.example.find_job.data.repository.JobRepository;
+import com.example.find_job.ui.base.BaseAuthActivity;
 import com.example.find_job.ui.job_detail.JobDetailActivity;
+import com.example.find_job.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SavedJobsActivity extends AppCompatActivity {
+public class SavedJobsActivity extends BaseAuthActivity {
 
     private RecyclerView recyclerView;
     private JobAdapter adapter;
@@ -30,11 +31,16 @@ public class SavedJobsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 🚫 ADMIN SHOULD NOT ACCESS SAVED JOBS
+        SessionManager sessionManager = new SessionManager(this);
+        if (sessionManager.isAdmin()) {
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_saved_jobs);
 
-        // =========================
-        // BACK BUTTON (ARROW)
-        // =========================
         View btnBack = findViewById(R.id.btn_back);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -43,7 +49,7 @@ public class SavedJobsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rvSavedJobs);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        repository = new JobRepository();
+        repository = new JobRepository(this);
         loadSavedJobs();
     }
 
@@ -70,7 +76,6 @@ public class SavedJobsActivity extends AppCompatActivity {
 
             adapter = new JobAdapter(savedJobs, this::openDetail);
 
-            // LONG PRESS → REMOVE
             adapter.setOnJobLongClickListener(job -> {
                 showRemoveDialog(job.id);
             });
@@ -108,7 +113,7 @@ public class SavedJobsActivity extends AppCompatActivity {
     }
 
     // =========================
-    // OPEN JOB DETAIL (FIXED)
+    // OPEN JOB DETAIL
     // =========================
     private void openDetail(Job job) {
         Intent i = new Intent(this, JobDetailActivity.class);
@@ -121,7 +126,6 @@ public class SavedJobsActivity extends AppCompatActivity {
         i.putExtra("salary", job.salary);
         i.putExtra("employmentType", job.employmentType);
 
-        // ✅ FIX: PASS REQUIREMENTS
         if (job.requirements != null) {
             i.putStringArrayListExtra(
                     "requirements",

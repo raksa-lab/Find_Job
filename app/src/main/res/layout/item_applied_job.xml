@@ -35,6 +35,15 @@
                 android:textColor="#1A1A1A"
                 android:maxLines="2"
                 android:ellipsize="end" />
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Applied"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#6C63FF"
+                android:layout_marginTop="4dp"/>
 
             <!-- Company • Location -->
             <LinearLayout
@@ -137,13 +146,16 @@
 
             <!-- Remark -->
             <TextView
-                android:id="@+id/tvRemark"
+                android:id="@+id/tvAdminNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remark: —"
+                android:text="Admin note: —"
                 android:textColor="#9E9E9E"
                 android:textSize="12sp"
-                android:layout_marginTop="6dp" />
+                android:layout_marginTop="6dp"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
         </LinearLayout>
 
         <!-- ================= ACCENT BAR ================= -->

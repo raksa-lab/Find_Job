@@ -1,17 +1,32 @@
 package com.example.find_job.Auth;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.find_job.data.models.RegisterRequest;
 import com.example.find_job.data.models.RegisterResponse;
 import com.example.find_job.data.repository.AuthRepository;
 
-public class RegisterViewModel extends ViewModel {
+public class RegisterViewModel extends AndroidViewModel {
 
-    private final AuthRepository repository = new AuthRepository();
+    private final AuthRepository repository;
 
-    public LiveData<RegisterResponse> register(String name, String email, String password) {
-        return repository.registerUser(new RegisterRequest(name, email, password));
+    public RegisterViewModel(@NonNull Application application) {
+        super(application);
+        // ✅ PASS CONTEXT
+        repository = new AuthRepository(application);
+    }
+
+    public LiveData<RegisterResponse> register(
+            String name,
+            String email,
+            String password
+    ) {
+        return repository.registerUser(
+                new RegisterRequest(name, email, password)
+        );
     }
 }

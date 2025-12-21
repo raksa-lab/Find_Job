@@ -20,34 +20,46 @@ import com.example.find_job.Auth.LoginActivity;
 import com.example.find_job.R;
 import com.example.find_job.ui.jobs.AddJobActivity;
 import com.example.find_job.ui.saved.SavedJobsActivity;
+import com.example.find_job.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 
 public class ProfileFragment extends Fragment {
 
-    // ===============================
-    // Activity Result Launcher
-    // ===============================
     private ActivityResultLauncher<Intent> addJobLauncher;
 
-    // Profile info
     private ImageView ivProfile;
     private TextView tvName, tvPosition, tvLocation, tvAbout;
-
-    // Stats
     private TextView tvApplications, tvSaved, tvViews;
 
-    // Actions
     private MaterialButton btnEditProfile, btnLogout;
 
-    // Quick actions
     private View cardApplications, cardSaved, cardCV;
-
-    // Settings
     private LinearLayout menuAccount, menuNotifications, menuPrivacy, menuHelp;
 
     // ===============================
-    // Lifecycle
+    // 🔐 ROUTE PROTECTION
     // ===============================
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        SessionManager sessionManager = new SessionManager(requireContext());
+
+        // Not logged in → redirect
+        if (!sessionManager.isLoggedIn()) {
+            Intent i = new Intent(requireContext(), LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            requireActivity().finish();
+            return;
+        }
+
+        // Job seeker should NOT post jobs
+        if (sessionManager.isJobSeeker()) {
+            cardApplications.setVisibility(View.GONE);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(
@@ -65,24 +77,17 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    // ===============================
-    // Register Activity Result
-    // ===============================
     private void setupActivityResult() {
         addJobLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == requireActivity().RESULT_OK) {
                         showToast("Job list updated");
-                        // TODO: refresh job list if needed
                     }
                 }
         );
     }
 
-    // ===============================
-    // Bind Views
-    // ===============================
     private void bindViews(View view) {
 
         ivProfile = view.findViewById(R.id.iv_profile_image);
@@ -108,26 +113,20 @@ public class ProfileFragment extends Fragment {
         menuHelp = view.findViewById(R.id.menu_help);
     }
 
-    // ===============================
-    // Click Listeners
-    // ===============================
     private void setupClickListeners() {
 
-        // Add Job
+        // ADMIN ONLY
         cardApplications.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), AddJobActivity.class);
             addJobLauncher.launch(intent);
         });
 
-        // Saved Jobs
+        // JOB SEEKER
         cardSaved.setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), SavedJobsActivity.class))
         );
 
-        // CV
-        cardCV.setOnClickListener(v ->
-                showToast("CV")
-        );
+        cardCV.setOnClickListener(v -> showToast("CV"));
 
         btnEditProfile.setOnClickListener(v ->
                 showToast("Edit profile")
@@ -135,33 +134,18 @@ public class ProfileFragment extends Fragment {
 
         btnLogout.setOnClickListener(v -> logoutUser());
 
-        menuAccount.setOnClickListener(v ->
-                showToast("Account settings")
-        );
-
-        menuNotifications.setOnClickListener(v ->
-                showToast("Notifications")
-        );
-
-        menuPrivacy.setOnClickListener(v ->
-                showToast("Privacy & security")
-        );
-
-        menuHelp.setOnClickListener(v ->
-                showToast("Help & support")
-        );
+        menuAccount.setOnClickListener(v -> showToast("Account settings"));
+        menuNotifications.setOnClickListener(v -> showToast("Notifications"));
+        menuPrivacy.setOnClickListener(v -> showToast("Privacy & security"));
+        menuHelp.setOnClickListener(v -> showToast("Help & support"));
     }
 
     // ===============================
-    // Logout
+    // LOGOUT (CLEAN)
     // ===============================
     private void logoutUser() {
-
-        requireActivity()
-                .getSharedPreferences("USER_SESSION", requireContext().MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
+        SessionManager sessionManager = new SessionManager(requireContext());
+        sessionManager.logout();
 
         Intent intent = new Intent(requireContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -170,10 +154,9 @@ public class ProfileFragment extends Fragment {
     }
 
     // ===============================
-    // Mock Data (Replace with API)
+    // MOCK DATA
     // ===============================
     private void loadUserData() {
-
         tvName.setText("John Doe");
         tvPosition.setText("Senior Product Designer");
         tvLocation.setText("📍 San Francisco, CA");
@@ -187,9 +170,6 @@ public class ProfileFragment extends Fragment {
         );
     }
 
-    // ===============================
-    // Toast Helper
-    // ===============================
     private void showToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }

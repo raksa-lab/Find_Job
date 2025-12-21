@@ -1,5 +1,7 @@
 package com.example.find_job.data.repository;
 
+import android.content.Context;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.find_job.data.models.RegisterRequest;
@@ -15,8 +17,11 @@ public class AuthRepository {
 
     private final serviceAPI api;
 
-    public AuthRepository() {
-        api = RetrofitClient.getClient().create(serviceAPI.class);
+    // ✅ CONTEXT REQUIRED
+    public AuthRepository(Context context) {
+        api = RetrofitClient
+                .getClient(context)
+                .create(serviceAPI.class);
     }
 
     public MutableLiveData<RegisterResponse> registerUser(RegisterRequest request) {
@@ -25,7 +30,10 @@ public class AuthRepository {
 
         api.register(request).enqueue(new Callback<RegisterResponse>() {
             @Override
-            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+            public void onResponse(
+                    Call<RegisterResponse> call,
+                    Response<RegisterResponse> response
+            ) {
                 if (response.isSuccessful() && response.body() != null) {
                     result.setValue(response.body());
                 } else {

@@ -1,21 +1,27 @@
 package com.example.find_job.ui.home;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.find_job.data.models.Job;
 import com.example.find_job.data.repository.JobRepository;
 
 import java.util.List;
 
-public class HomeViewModel extends ViewModel {
+public class HomeViewModel extends AndroidViewModel {
 
     private final JobRepository repository;
     private final LiveData<List<Job>> jobs;
 
-    public HomeViewModel() {
-        repository = new JobRepository();
-        jobs = repository.fetchJobs(); // CALL API HERE
+    public HomeViewModel(@NonNull Application application) {
+        super(application);
+
+        // ✅ PASS CONTEXT
+        repository = new JobRepository(application);
+        jobs = repository.fetchJobs();
     }
 
     public LiveData<List<Job>> getJobs() {
