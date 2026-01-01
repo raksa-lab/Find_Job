@@ -18,6 +18,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#00BCD4</color>          <!-- Cyan -->
     <color name="colorSecondary">#FF9800</color>       <!-- Orange accent -->
+    <color name="chip_background_selected">#EDEBFF</color>
+    <color name="chip_text_selected">#6C63FF</color>
 
     <!-- Background Colors -->
     <color name="backgroundLight">#FFFFFF</color>

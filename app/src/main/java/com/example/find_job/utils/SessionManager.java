@@ -7,7 +7,7 @@ public class SessionManager {
 
     private static final String PREF_NAME = "USER_SESSION";
     private static final String KEY_TOKEN = "token";
-    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_USER_UID = "user_uid";
     private static final String KEY_ROLE = "role";
 
     private final SharedPreferences prefs;
@@ -19,34 +19,28 @@ public class SessionManager {
     // ===============================
     // SAVE SESSION
     // ===============================
-    public void saveSession(String token, int userId, String role) {
+    public void saveSession(String token, String uid, String role) {
         prefs.edit()
                 .putString(KEY_TOKEN, token)
-                .putInt(KEY_USER_ID, userId)
+                .putString(KEY_USER_UID, uid)
                 .putString(KEY_ROLE, role)
                 .apply();
     }
 
-    // ===============================
-    // GETTERS
-    // ===============================
     public String getToken() {
         return prefs.getString(KEY_TOKEN, null);
     }
 
-    public int getUserId() {
-        return prefs.getInt(KEY_USER_ID, -1);
+    public String getUserUid() {
+        return prefs.getString(KEY_USER_UID, null);
     }
 
     public String getRole() {
         return prefs.getString(KEY_ROLE, "");
     }
 
-    // ===============================
-    // ROLE CHECKS
-    // ===============================
     public boolean isLoggedIn() {
-        return getToken() != null;
+        return getToken() != null && !getToken().isEmpty();
     }
 
     public boolean isAdmin() {
@@ -54,12 +48,14 @@ public class SessionManager {
     }
 
     public boolean isJobSeeker() {
-        return "seeker".equalsIgnoreCase(getRole());
+        return "employee".equalsIgnoreCase(getRole())
+                || "seeker".equalsIgnoreCase(getRole());
     }
 
-    // ===============================
-    // LOGOUT
-    // ===============================
+    public boolean isEmployer() {
+        return "employer".equalsIgnoreCase(getRole());
+    }
+
     public void logout() {
         prefs.edit().clear().apply();
     }

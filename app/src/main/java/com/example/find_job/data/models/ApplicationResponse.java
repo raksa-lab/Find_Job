@@ -1,8 +1,15 @@
 package com.example.find_job.data.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ApplicationResponse {
-    public String id;
-    public String status;        // pending, accepted, rejected
-    public Job job;
-    public String appliedAt;
+
+    @SerializedName("success")
+    public boolean success;
+
+    @SerializedName("hasApplied")
+    public boolean hasApplied;
+
+    @SerializedName("canApply")
+    public boolean canApply;
 }

@@ -1,58 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.MaterialToolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:layout_marginTop="10dp"
-    android:paddingTop="20dp"
-    app:contentInsetStart="0dp"
-    android:elevation="4dp"
-    android:background="?attr/colorSurface">
+    android:background="#7A72FD"
+    android:elevation="0dp"
+    android:fitsSystemWindows="false"
+    app:contentInsetStart="16dp"
+    app:contentInsetEnd="16dp">
 
-    <!-- Use a ConstraintLayout as the direct child of the Toolbar -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <!-- LOGO CONTAINER (ICON + TEXT) -->
-        <LinearLayout
-            android:id="@+id/logo_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <!-- LOGO -->
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@mipmap/ic_companylogo_round_round"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <ImageView
-                android:id="@+id/iv_logo_icon"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@mipmap/ic_companylogo_round_round"/>
-            <!-- CHANGED: Use theme attribute for text color -->
-
-        </LinearLayout>
-
+        <!-- APP NAME -->
         <TextView
-            android:id="@+id/iv_logo_text"
+            android:id="@+id/tv_app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hirify"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="22sp"
-
+            android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.025"
-            app:layout_constraintStart_toEndOf="@+id/logo_container"
+            android:textColor="#FFFFFF"
+            app:layout_constraintStart_toEndOf="@id/iv_logo"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.47" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="12dp"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.appcompat.widget.Toolbar>
+
+</com.google.android.material.appbar.MaterialToolbar>

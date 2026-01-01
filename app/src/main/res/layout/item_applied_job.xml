@@ -127,6 +127,7 @@
             android:layout_marginEnd="20dp" />
 
         <!-- ================= BOTTOM SECTION ================= -->
+        <!-- ================= BOTTOM SECTION ================= -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -156,7 +157,28 @@
                 android:maxLines="2"
                 android:ellipsize="end"/>
 
+            <!-- ACTION ROW -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="12dp">
+
+                <Button
+                    android:id="@+id/btnWithdraw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Delete"
+                    android:textAllCaps="false"
+                    android:textSize="13sp"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#E53935"
+                    app:cornerRadius="18dp"/>
+            </LinearLayout>
+
         </LinearLayout>
+
 
         <!-- ================= ACCENT BAR ================= -->
         <View

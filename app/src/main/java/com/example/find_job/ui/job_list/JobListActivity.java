@@ -2,6 +2,7 @@ package com.example.find_job.ui.job_list;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,12 +30,20 @@ public class JobListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rvAllJobs);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel = new ViewModelProvider(this).get(JobListViewModel.class);
+        viewModel = new ViewModelProvider(this)
+                .get(JobListViewModel.class);
 
         viewModel.getJobs().observe(this, jobs -> {
-            jobAdapter = new JobAdapter(jobs, job -> openJobDetail(job));
+
+            jobAdapter = new JobAdapter(
+                    this,               // ✅ Context
+                    jobs,               // ✅ Job list
+                    this::openJobDetail // ✅ Card click only
+            );
+
             recyclerView.setAdapter(jobAdapter);
         });
+
     }
 
     private void openJobDetail(Job job) {
@@ -53,7 +62,6 @@ public class JobListActivity extends AppCompatActivity {
             i.putExtra("createdAt_seconds", job.createdAt._seconds);
         }
 
-        // ⭐ SEND REQUIREMENTS ⭐
         ArrayList<String> reqList = new ArrayList<>();
         if (job.requirements != null) {
             reqList.addAll(job.requirements);
@@ -62,7 +70,4 @@ public class JobListActivity extends AppCompatActivity {
 
         startActivity(i);
     }
-
-
 }
-

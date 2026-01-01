@@ -2,10 +2,8 @@ package com.example.find_job.ui.job_detail;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,12 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.find_job.MainActivity;
 import com.example.find_job.R;
-import com.example.find_job.ui.saved.SavedJobsActivity;
+import com.example.find_job.data.repository.ApplicationRepository;
+import com.example.find_job.data.repository.FavoriteRepository;
+import com.example.find_job.data.repository.UserRepository;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class JobDetailActivity extends AppCompatActivity {
 
@@ -28,10 +27,15 @@ public class JobDetailActivity extends AppCompatActivity {
             tvSalaryAmount, tvDescription,
             tvRequirements, tvEmploymentType;
 
-    private Button btnApply, btnViewStatus, btnSave;
+    private MaterialButton btnApply, btnViewStatus, btnSave;
     private FloatingActionButton fabShare;
 
     private String jobId, jobTitle, jobCompany;
+    private boolean isSaved = false;
+
+    private FavoriteRepository favoriteRepository;
+    private ApplicationRepository applicationRepository;
+    private UserRepository userRepository;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -39,11 +43,13 @@ public class JobDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_detail);
 
-        // Back
+        // =========================
+        // BACK
+        // =========================
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
         // =========================
-        // Bind UI
+        // BIND UI
         // =========================
         tvTitle = findViewById(R.id.tvTitle);
         tvCompany = findViewById(R.id.tvCompany);
@@ -58,8 +64,12 @@ public class JobDetailActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         fabShare = findViewById(R.id.fabShare);
 
+        favoriteRepository = new FavoriteRepository(this);
+        applicationRepository = new ApplicationRepository(this);
+        userRepository = new UserRepository(this);
+
         // =========================
-        // Get Intent Data
+        // GET INTENT DATA
         // =========================
         Intent intent = getIntent();
         boolean openedFromApplied =
@@ -84,7 +94,7 @@ public class JobDetailActivity extends AppCompatActivity {
         );
 
         // =========================
-        // Salary
+        // SALARY
         // =========================
         int salary = intent.getIntExtra("salary", 0);
         tvSalaryAmount.setText(
@@ -92,22 +102,19 @@ public class JobDetailActivity extends AppCompatActivity {
         );
 
         // =========================
-        // Employment Type
+        // EMPLOYMENT TYPE
         // =========================
-        String employmentType =
-                intent.getStringExtra("employmentType");
+        String employmentType = intent.getStringExtra("employmentType");
 
         if (employmentType != null && !employmentType.isEmpty()) {
-            tvEmploymentType.setText(
-                    formatEmploymentType(employmentType)
-            );
+            tvEmploymentType.setText(formatEmploymentType(employmentType));
             tvEmploymentType.setVisibility(View.VISIBLE);
         } else {
             tvEmploymentType.setVisibility(View.GONE);
         }
 
         // =========================
-        // Requirements
+        // REQUIREMENTS
         // =========================
         ArrayList<String> reqList =
                 intent.getStringArrayListExtra("requirements");
@@ -123,17 +130,17 @@ public class JobDetailActivity extends AppCompatActivity {
         }
 
         // =========================
-        // From Applied Jobs
+        // FROM APPLIED JOBS
         // =========================
         if (openedFromApplied) {
             btnApply.setVisibility(View.GONE);
-            btnViewStatus.setVisibility(View.GONE);
+            btnViewStatus.setVisibility(View.VISIBLE);
         }
 
         // =========================
         // ACTIONS
         // =========================
-        btnApply.setOnClickListener(v -> showApplyDialog());
+        btnApply.setOnClickListener(v -> checkBeforeApply());
 
         btnViewStatus.setOnClickListener(v -> {
             Intent i = new Intent(this, MainActivity.class);
@@ -143,49 +150,137 @@ public class JobDetailActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-        btnSave.setOnClickListener(v -> saveJobForLater());
-
+        btnSave.setOnClickListener(v -> toggleSave());
         fabShare.setOnClickListener(v -> shareJob());
     }
 
     // =========================
-    // SAVE JOB (NEW)
+    // APPLY FLOW (CV + DUPLICATE CHECK)
     // =========================
-    private void saveJobForLater() {
+    private void checkBeforeApply() {
+
+        if (jobId == null) {
+            Toast.makeText(this, "Invalid job", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 1️⃣ Check CV exists
+        userRepository.hasResume().observe(this, hasResume -> {
+            if (!hasResume) {
+                Toast.makeText(
+                        this,
+                        "Please upload your CV before applying",
+                        Toast.LENGTH_LONG
+                ).show();
+                return;
+            }
+
+            // 2️⃣ Check already applied
+            applicationRepository.hasApplied(jobId).observe(this, applied -> {
+                if (applied) {
+                    Toast.makeText(
+                            this,
+                            "You already applied for this job",
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                    btnApply.setEnabled(false);
+                    btnApply.setText("Applied");
+                    btnViewStatus.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                // 3️⃣ Show apply dialog
+                showApplyDialog();
+            });
+        });
+    }
+
+    // =========================
+    // APPLY DIALOG
+    // =========================
+    private void showApplyDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Apply for Job");
+
+        EditText input = new EditText(this);
+        input.setHint("Cover letter (optional)");
+        builder.setView(input);
+
+        builder.setPositiveButton("Apply", null);
+        builder.setNegativeButton("Cancel", (d, w) -> d.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+
+                    String coverLetter = input.getText().toString();
+
+                    applicationRepository.apply(jobId, coverLetter)
+                            .observe(this, success -> {
+
+                                if (success) {
+                                    Toast.makeText(
+                                            this,
+                                            "Application submitted",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+
+                                    btnApply.setEnabled(false);
+                                    btnApply.setText("Applied");
+                                    btnViewStatus.setVisibility(View.VISIBLE);
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(
+                                            this,
+                                            "Failed to apply. Try again.",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            });
+                });
+    }
+
+    // =========================
+    // SAVE / UNSAVE JOB
+    // =========================
+    private void toggleSave() {
 
         if (jobId == null) {
             Toast.makeText(this, "Unable to save job", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        SharedPreferences prefs =
-                getSharedPreferences("saved_jobs", MODE_PRIVATE);
-
-        Set<String> saved =
-                prefs.getStringSet("job_ids", new HashSet<>());
-
-        Set<String> updated = new HashSet<>(saved);
-
-        if (updated.contains(jobId)) {
-            Toast.makeText(this, "Job already saved", Toast.LENGTH_SHORT).show();
-
-            // ✅ Route even if already saved
-            startActivity(new Intent(this, SavedJobsActivity.class));
-            return;
+        if (!isSaved) {
+            favoriteRepository.addFavorite(jobId);
+            setSavedUI(true);
+            Toast.makeText(this, "Saved for later", Toast.LENGTH_SHORT).show();
+        } else {
+            favoriteRepository.removeFavorite(jobId);
+            setSavedUI(false);
+            Toast.makeText(this, "Removed from saved", Toast.LENGTH_SHORT).show();
         }
-
-        updated.add(jobId);
-        prefs.edit().putStringSet("job_ids", updated).apply();
-
-        Toast.makeText(this, "Saved for later", Toast.LENGTH_SHORT).show();
-
-        // ✅ ROUTE TO SAVED JOBS PAGE
-        startActivity(new Intent(this, SavedJobsActivity.class));
     }
 
+    private void setSavedUI(boolean saved) {
+        isSaved = saved;
+
+        if (saved) {
+            btnSave.setText("Saved");
+            btnSave.setIconResource(R.drawable.ic_bookmark_filled);
+            btnSave.setTextColor(getColor(R.color.primary));
+        } else {
+            btnSave.setText("Save for Later");
+            btnSave.setIconResource(R.drawable.ic_bookmark);
+            btnSave.setTextColor(getColor(R.color.gray));
+        }
+    }
 
     // =========================
-    // Format Job Type
+    // FORMAT JOB TYPE
     // =========================
     private String formatEmploymentType(String type) {
         switch (type.toLowerCase()) {
@@ -204,50 +299,15 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     // =========================
-    // Apply Dialog
-    // =========================
-    private void showApplyDialog() {
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(this);
-        builder.setTitle("Apply for Job");
-
-        EditText remarkInput = new EditText(this);
-        remarkInput.setHint("Add remark (optional)");
-        builder.setView(remarkInput);
-
-        builder.setPositiveButton("Submit",
-                (d, w) -> saveApplication(
-                        remarkInput.getText().toString()
-                ));
-
-        builder.setNegativeButton("Cancel",
-                (d, w) -> d.dismiss());
-
-        builder.show();
-    }
-
-    private void saveApplication(String remark) {
-        SharedPreferences prefs =
-                getSharedPreferences("APPLIED_JOBS", MODE_PRIVATE);
-
-        String record =
-                jobId + "||" + jobTitle + "||" + jobCompany + "||" + remark;
-
-        prefs.edit().putString(jobId, record).apply();
-
-        Toast.makeText(this,
-                "Application Submitted!",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    // =========================
-    // Share Job
+    // SHARE JOB
     // =========================
     private void shareJob() {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
-        share.putExtra(Intent.EXTRA_TEXT,
-                "Check this job: " + jobTitle + " at " + jobCompany);
+        share.putExtra(
+                Intent.EXTRA_TEXT,
+                "Check this job: " + jobTitle + " at " + jobCompany
+        );
         startActivity(Intent.createChooser(share, "Share via"));
     }
 }

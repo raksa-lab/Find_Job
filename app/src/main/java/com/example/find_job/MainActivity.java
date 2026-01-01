@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.find_job.Auth.LoginActivity;
+import com.example.find_job.ui.admin.AdminApplicationsFragment;
 import com.example.find_job.ui.application.AppliedJobsFragment;
 import com.example.find_job.ui.home.Home;
 import com.example.find_job.ui.job_list.JobListFragment;
@@ -25,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
 
-        // 🔐 MUST BE LOGGED IN
         if (!sessionManager.isLoggedIn()) {
             redirectToLogin();
             return;
@@ -37,75 +37,65 @@ public class MainActivity extends AppCompatActivity {
 
         setupBottomNavigationByRole();
 
-        loadFragment(new Home());
+        // ===== DEFAULT TAB =====
+        if (sessionManager.isAdmin()) {
+            loadFragment(new JobListFragment());
+        } else {
+            loadFragment(new Home());
+        }
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment fragment = null;
 
-            int id = item.getItemId();
+            if (sessionManager.isAdmin()) {
 
-            if (id == R.id.menu_home) {
-                loadFragment(new Home());
-                return true;
+                // ===== ADMIN NAV =====
+                if (item.getItemId() == R.id.menu_admin_jobs) {
+                    fragment = new JobListFragment();
 
-            } else if (id == R.id.menu_job) {
-                loadFragment(new JobListFragment());
-                return true;
+                } else if (item.getItemId() == R.id.menu_admin_applications) {
+                    fragment = new AdminApplicationsFragment();
 
-            } else if (id == R.id.menu_application) {
-
-                // 🚫 ADMIN CANNOT ACCESS APPLICATIONS
-                if (sessionManager.isAdmin()) {
-                    return false;
+                } else if (item.getItemId() == R.id.menu_admin_profile) {
+                    fragment = new ProfileFragment();
                 }
 
-                loadFragment(new AppliedJobsFragment());
-                return true;
+            } else {
 
-            } else if (id == R.id.appBarLayout) {
-                loadFragment(new ProfileFragment());
+                // ===== USER NAV =====
+                if (item.getItemId() == R.id.menu_home) {
+                    fragment = new Home();
+
+                } else if (item.getItemId() == R.id.menu_job) {
+                    fragment = new JobListFragment();
+
+                } else if (item.getItemId() == R.id.menu_application) {
+                    fragment = new AppliedJobsFragment();
+
+                } else if (item.getItemId() == R.id.menu_profile) {
+                    fragment = new ProfileFragment();
+                }
+            }
+
+            if (fragment != null) {
+                loadFragment(fragment);
                 return true;
             }
 
             return false;
         });
-
-        handleNavigationIntent(getIntent());
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleNavigationIntent(intent);
     }
 
     // ===============================
-    // ROLE-BASED BOTTOM NAV
+    // ROLE-BASED MENU
     // ===============================
     private void setupBottomNavigationByRole() {
+        bottomNavigationView.getMenu().clear();
 
         if (sessionManager.isAdmin()) {
-            // Remove Job Seeker–only tab
-            bottomNavigationView.getMenu()
-                    .removeItem(R.id.menu_application);
-        }
-    }
-
-    // ===============================
-    // DEEP LINK HANDLING
-    // ===============================
-    private void handleNavigationIntent(Intent intent) {
-        if (intent == null) return;
-
-        String tab = intent.getStringExtra("open_tab");
-        if (tab == null) return;
-
-        if (tab.equals("application") && !sessionManager.isAdmin()) {
-            bottomNavigationView.setSelectedItemId(R.id.menu_application);
-            loadFragment(new AppliedJobsFragment());
-
-        } else if (tab.equals("job")) {
-            bottomNavigationView.setSelectedItemId(R.id.menu_job);
-            loadFragment(new JobListFragment());
+            bottomNavigationView.inflateMenu(R.menu.menu_bottom_admin);
+        } else {
+            bottomNavigationView.inflateMenu(R.menu.menu_bottom_user);
         }
     }
 

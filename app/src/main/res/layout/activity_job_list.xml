@@ -1,106 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvAllJobsTitle"
-        android:layout_width="wrap_content"
+    <!-- TITLE + DELETE -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All Jobs"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:paddingBottom="12dp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvAllJobsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="All Jobs"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnDelete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_delete"
+            android:padding="4dp"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <!-- SEARCH BAR (🔥 REQUIRED) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        app:cardBackgroundColor="@color/searchBarBackground"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:cardCornerRadius="27dp"
+        app:cardElevation="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/black" />
+
+            <EditText
+                android:id="@+id/search_job"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:hint="Search job..."
+                android:background="@android:color/transparent"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <!-- CATEGORY CHIPS -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="12dp">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/category_chips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:singleSelection="true"
+
             app:selectionRequired="true">
+
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_all"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:text="All"
-                android:textColor="@color/chip_text_color"
-                app:chipBackgroundColor="@color/chip_background_color"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="0dp"
                 android:checked="true" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_design"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Design"
-                android:textColor="@color/chip_text_color"
-                app:chipBackgroundColor="@color/chip_background_color"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="0dp"
-                android:checked="true" />
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:text="Design" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_business"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Business"
-                android:textColor="@color/chip_text_color"
-                app:chipBackgroundColor="@color/chip_background_color"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="0dp" />
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:text="Business" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_marketing"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Marketing"
-                android:textColor="@color/chip_text_color"
-                app:chipBackgroundColor="@color/chip_background_color"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="0dp" />
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:text="Marketing" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_technology"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Technology"
-                android:textColor="@color/chip_text_color"
-                app:chipBackgroundColor="@color/chip_background_color"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="0dp" />
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:text="Technology" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_finance"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Finance"
-                android:textColor="@color/chip_text_color"
-                app:chipBackgroundColor="@color/chip_background_color"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="0dp" />
-
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:text="Finance" />
 
         </com.google.android.material.chip.ChipGroup>
+
     </HorizontalScrollView>
+
+    <!-- JOB LIST -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAllJobs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
+
 </LinearLayout>

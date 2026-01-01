@@ -51,6 +51,12 @@ dependencies {
 
     // Glide (Java project uses annotationProcessor)
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    // Firebase BOM (controls versions)
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+
+// Firebase Auth
+    implementation("com.google.firebase:firebase-auth")
+
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
     testImplementation(libs.junit)

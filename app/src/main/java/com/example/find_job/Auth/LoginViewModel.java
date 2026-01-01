@@ -32,7 +32,7 @@ public class LoginViewModel extends AndroidViewModel {
                 // ✅ SAVE SESSION CORRECTLY
                 sessionManager.saveSession(
                         loginResponse.idToken,              // token
-                        loginResponse.uid.hashCode(),       // local int ID
+                        loginResponse.uid,      // local int ID
                         loginResponse.user.role             // admin / seeker
                 );
             }

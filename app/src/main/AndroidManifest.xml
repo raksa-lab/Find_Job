@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,8 +14,7 @@
         android:roundIcon="@mipmap/ic_companylogo_round_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Find_Job">
-
-        <activity
+    <activity
             android:name=".Auth.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -41,6 +41,16 @@
         <activity
             android:name=".ui.saved.SavedJobsActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.profile.edit.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.profile.cv.MyCvActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.users.AdminUserListActivity"
+            android:exported="false" />
+
 
 
 

@@ -2,7 +2,7 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.Find_Job" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimary">@color/chip_text_selected</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorSecondary">@color/primary_light</item>
 

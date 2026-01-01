@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,9 +45,23 @@ public class Home extends Fragment {
     ) {
         View view = inflater.inflate(R.layout.home, container, false);
 
+        // INIT VIEWMODEL
+        viewModel = new ViewModelProvider(requireActivity())
+                .get(HomeViewModel.class);
+
+        TextView tvJobCount = view.findViewById(R.id.tv_job_count);
+
+        // =====================
+        // JOB COUNT
+        // =====================
+        viewModel.getTotalJobs().observe(getViewLifecycleOwner(), total -> {
+            if (total != null) {
+                tvJobCount.setText(String.valueOf(total));
+            }
+        });
+
         blogSlider = view.findViewById(R.id.blogSlider);
         rvHomeJobs = view.findViewById(R.id.rvHomeJobs);
-
         rvHomeJobs.setLayoutManager(new LinearLayoutManager(getContext()));
 
         setupBlogSlider();
@@ -61,7 +76,6 @@ public class Home extends Fragment {
     ) {
         super.onViewCreated(view, savedInstanceState);
 
-
         view.findViewById(R.id.see_all).setOnClickListener(v -> {
             Intent i = new Intent(requireContext(), MainActivity.class);
             i.putExtra("open_tab", "job");
@@ -69,23 +83,29 @@ public class Home extends Fragment {
             startActivity(i);
         });
 
-        viewModel = new ViewModelProvider(requireActivity())
-                .get(HomeViewModel.class);
-
+        // =====================
+        // OBSERVE JOBS
+        // =====================
         viewModel.getJobs().observe(getViewLifecycleOwner(), jobs -> {
             if (jobs == null) return;
 
             List<Job> limitedJobs = new ArrayList<>();
-            int limit = Math.min(jobs.size(), 3);
+            int limit = Math.min(jobs.size(), 5);
+
             for (int i = 0; i < limit; i++) {
                 limitedJobs.add(jobs.get(i));
             }
 
-            jobAdapter = new JobAdapter(limitedJobs, this::openJobDetail);
+            // ✅ CORRECT CONSTRUCTOR
+            jobAdapter = new JobAdapter(
+                    requireContext(),
+                    limitedJobs,
+                    this::openJobDetail
+            );
+
             rvHomeJobs.setAdapter(jobAdapter);
         });
     }
-
 
     // ======================
     // BLOG SLIDER
@@ -93,23 +113,14 @@ public class Home extends Fragment {
     private void setupBlogSlider() {
 
         List<BlogItem> blogs = new ArrayList<>();
-        blogs.add(new BlogItem(
-                "10 ways to increase your chances of getting hired",
-                "Expert tips and strategies to land your dream job"
-        ));
-        blogs.add(new BlogItem(
-                "How to prepare for interviews",
-                "Practical advice from hiring managers"
-        ));
-        blogs.add(new BlogItem(
-                "Build a CV that stands out",
-                "Design and content tips recruiters love"
-        ));
+
+        blogs.add(new BlogItem(R.drawable.banner1, "", ""));
+        blogs.add(new BlogItem(R.drawable.banner2, "", ""));
+        blogs.add(new BlogItem(R.drawable.banner3, "", ""));
 
         BlogSliderAdapter adapter = new BlogSliderAdapter(blogs);
         blogSlider.setAdapter(adapter);
 
-        // Smooth scale + fade animation
         blogSlider.setPageTransformer((page, position) -> {
             float abs = Math.abs(position);
             page.setScaleX(0.94f + (1 - abs) * 0.06f);
@@ -117,7 +128,6 @@ public class Home extends Fragment {
             page.setAlpha(0.75f + (1 - abs) * 0.25f);
         });
 
-        // Auto slide (slow & smooth)
         sliderHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -137,8 +147,6 @@ public class Home extends Fragment {
         i.putExtra("location", job.location);
         i.putExtra("description", job.description);
         i.putExtra("salary", job.salary);
-
-        // 🔴 ADD THIS LINE (FIX)
         i.putExtra("employmentType", job.employmentType);
 
         i.putStringArrayListExtra(
@@ -150,8 +158,6 @@ public class Home extends Fragment {
 
         startActivity(i);
     }
-
-
 
     @Override
     public void onDestroyView() {

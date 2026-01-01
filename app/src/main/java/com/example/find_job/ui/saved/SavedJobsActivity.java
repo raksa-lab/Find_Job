@@ -1,38 +1,34 @@
 package com.example.find_job.ui.saved;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.find_job.R;
 import com.example.find_job.adapters.JobAdapter;
 import com.example.find_job.data.models.Job;
-import com.example.find_job.data.repository.JobRepository;
 import com.example.find_job.ui.base.BaseAuthActivity;
-import com.example.find_job.ui.job_detail.JobDetailActivity;
 import com.example.find_job.utils.SessionManager;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SavedJobsActivity extends BaseAuthActivity {
 
-    private RecyclerView recyclerView;
     private JobAdapter adapter;
-    private JobRepository repository;
+    private SavedJobsViewModel viewModel;
+
+    private boolean deleteMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 🚫 ADMIN SHOULD NOT ACCESS SAVED JOBS
         SessionManager sessionManager = new SessionManager(this);
         if (sessionManager.isAdmin()) {
             finish();
@@ -41,82 +37,90 @@ public class SavedJobsActivity extends BaseAuthActivity {
 
         setContentView(R.layout.activity_saved_jobs);
 
+        RecyclerView rv = findViewById(R.id.rvSavedJobs);
+        ImageView btnDelete = findViewById(R.id.btnDelete);
         View btnBack = findViewById(R.id.btn_back);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
-        }
 
-        recyclerView = findViewById(R.id.rvSavedJobs);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        btnBack.setOnClickListener(v -> finish());
 
-        repository = new JobRepository(this);
-        loadSavedJobs();
-    }
+        rv.setLayoutManager(new LinearLayoutManager(this));
 
-    // =========================
-    // LOAD SAVED JOBS
-    // =========================
-    private void loadSavedJobs() {
-
-        SharedPreferences prefs =
-                getSharedPreferences("saved_jobs", MODE_PRIVATE);
-
-        Set<String> savedIds =
-                prefs.getStringSet("job_ids", new HashSet<>());
-
-        repository.fetchJobs().observe(this, jobs -> {
-
-            List<Job> savedJobs = new ArrayList<>();
-
-            for (Job job : jobs) {
-                if (savedIds.contains(job.id)) {
-                    savedJobs.add(job);
+        // ✅ FIXED: 3-ARG CONSTRUCTOR
+        adapter = new JobAdapter(
+                this,                 // ✅ Context
+                new ArrayList<>(),    // ✅ Data
+                job -> {
+                    if (!deleteMode) {
+                        openDetail(job);
+                    }
                 }
+        );
+
+
+        rv.setAdapter(adapter);
+
+        viewModel = new ViewModelProvider(this)
+                .get(SavedJobsViewModel.class);
+        viewModel.init(this);
+
+        viewModel.getSavedJobs().observe(this, jobs -> {
+            adapter.updateData(jobs);
+        });
+
+        // =====================
+        // DELETE BUTTON
+        // =====================
+        btnDelete.setOnClickListener(v -> {
+
+            if (!deleteMode) {
+                // ENTER DELETE MODE
+                deleteMode = true;
+                adapter.enableSelection(true);
+                Toast.makeText(
+                        this,
+                        "Select jobs to delete",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
             }
 
-            adapter = new JobAdapter(savedJobs, this::openDetail);
+            // CONFIRM DELETE
+            var selected = adapter.getSelectedJobIds();
 
-            adapter.setOnJobLongClickListener(job -> {
-                showRemoveDialog(job.id);
-            });
+            if (selected.isEmpty()) {
+                Toast.makeText(
+                        this,
+                        "No job selected",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
 
-            recyclerView.setAdapter(adapter);
+            new AlertDialog.Builder(this)
+                    .setTitle("Remove saved jobs?")
+                    .setMessage("Selected jobs will be removed.")
+                    .setPositiveButton("Delete", (d, w) -> {
+                        for (String id : selected) {
+                            viewModel.removeSavedJob(id);
+                        }
+                        exitDeleteMode();
+                    })
+                    .setNegativeButton("Cancel", (d, w) -> exitDeleteMode())
+                    .show();
         });
     }
 
-    // =========================
-    // REMOVE SAVED JOB
-    // =========================
-    private void showRemoveDialog(String jobId) {
-        new AlertDialog.Builder(this)
-                .setTitle("Remove saved job?")
-                .setMessage("This job will be removed from saved list.")
-                .setPositiveButton("Remove",
-                        (d, w) -> removeSavedJob(jobId))
-                .setNegativeButton("Cancel", null)
-                .show();
+    private void exitDeleteMode() {
+        deleteMode = false;
+        adapter.enableSelection(false);
     }
 
-    private void removeSavedJob(String jobId) {
-        SharedPreferences prefs =
-                getSharedPreferences("saved_jobs", MODE_PRIVATE);
-
-        Set<String> saved =
-                prefs.getStringSet("job_ids", new HashSet<>());
-
-        Set<String> updated = new HashSet<>(saved);
-        updated.remove(jobId);
-
-        prefs.edit().putStringSet("job_ids", updated).apply();
-
-        loadSavedJobs();
-    }
-
-    // =========================
-    // OPEN JOB DETAIL
-    // =========================
     private void openDetail(Job job) {
-        Intent i = new Intent(this, JobDetailActivity.class);
+        android.content.Intent i =
+                new android.content.Intent(
+                        this,
+                        com.example.find_job.ui.job_detail.JobDetailActivity.class
+                );
 
         i.putExtra("jobId", job.id);
         i.putExtra("title", job.title);
@@ -129,7 +133,7 @@ public class SavedJobsActivity extends BaseAuthActivity {
         if (job.requirements != null) {
             i.putStringArrayListExtra(
                     "requirements",
-                    new ArrayList<>(job.requirements)
+                    new java.util.ArrayList<>(job.requirements)
             );
         }
 
