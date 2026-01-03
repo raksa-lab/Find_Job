@@ -19,11 +19,14 @@ import com.example.find_job.R;
 import com.example.find_job.adapters.AppliedJobsAdapter;
 import com.example.find_job.utils.SessionManager;
 
+import java.util.ArrayList;
+
 public class AppliedJobsFragment extends Fragment {
 
     private RecyclerView rv;
     private TextView tvEmpty;
     private AppliedJobsViewModel viewModel;
+    private AppliedJobsAdapter adapter;
 
     @Override
     public void onStart() {
@@ -53,6 +56,14 @@ public class AppliedJobsFragment extends Fragment {
         viewModel = new ViewModelProvider(this)
                 .get(AppliedJobsViewModel.class);
 
+        adapter = new AppliedJobsAdapter(
+                requireContext(),
+                new ArrayList<>(),
+                viewModel
+        );
+
+        rv.setAdapter(adapter);
+
         observeData();
 
         return view;
@@ -71,12 +82,11 @@ public class AppliedJobsFragment extends Fragment {
                     tvEmpty.setVisibility(View.GONE);
                     rv.setVisibility(View.VISIBLE);
 
-                    AppliedJobsAdapter adapter =
-                            new AppliedJobsAdapter(
-                                    requireContext(),
-                                    list, viewModel
-                            );
-
+                    adapter = new AppliedJobsAdapter(
+                            requireContext(),
+                            list,
+                            viewModel
+                    );
                     rv.setAdapter(adapter);
                 });
     }

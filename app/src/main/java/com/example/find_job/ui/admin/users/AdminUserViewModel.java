@@ -34,14 +34,16 @@ public class AdminUserViewModel extends AndroidViewModel {
     }
 
     // ===============================
-    // TOTAL USERS (FROM pagination.totalItems)
+    // DISABLE USER (soft delete)
     // ===============================
+    public LiveData<Boolean> disableUser(String userId) {
+        return repository.disableUser(userId);
+    }
 
-
     // ===============================
-    // DELETE USER
+    // ENABLE USER (undo delete)
     // ===============================
-    public LiveData<Boolean> deleteUser(String userId) {
-        return repository.deleteUser(userId);
+    public LiveData<Boolean> enableUser(String userId) {
+        return repository.enableUser(userId);
     }
 }

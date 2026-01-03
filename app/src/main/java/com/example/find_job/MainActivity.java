@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
 
+        // ===============================
+        // LOGIN CHECK
+        // ===============================
         if (!sessionManager.isLoggedIn()) {
             redirectToLogin();
             return;
@@ -35,16 +38,21 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        // ===============================
+        // ROLE-BASED MENU
+        // ===============================
         setupBottomNavigationByRole();
 
-        // ===== DEFAULT TAB =====
-        if (sessionManager.isAdmin()) {
-            loadFragment(new JobListFragment());
-        } else {
-            loadFragment(new Home());
-        }
+        // ===============================
+        // HANDLE INITIAL INTENT ROUTING
+        // ===============================
+        handleIntentRouting(getIntent());
 
+        // ===============================
+        // BOTTOM NAVIGATION LISTENER
+        // ===============================
         bottomNavigationView.setOnItemSelectedListener(item -> {
+
             Fragment fragment = null;
 
             if (sessionManager.isAdmin()) {
@@ -87,7 +95,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ===============================
-    // ROLE-BASED MENU
+    // HANDLE NEW INTENT (IMPORTANT FIX)
+    // ===============================
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntentRouting(intent);
+    }
+
+    // ===============================
+    // INTENT ROUTING LOGIC
+    // ===============================
+    private void handleIntentRouting(Intent intent) {
+
+        String openTab = intent.getStringExtra("open_tab");
+
+        if (openTab != null && !sessionManager.isAdmin()) {
+
+            switch (openTab) {
+                case "application":
+                    bottomNavigationView.setSelectedItemId(R.id.menu_application);
+                    loadFragment(new AppliedJobsFragment());
+                    break;
+
+                case "job":
+                    bottomNavigationView.setSelectedItemId(R.id.menu_job);
+                    loadFragment(new JobListFragment());
+                    break;
+
+                case "profile":
+                    bottomNavigationView.setSelectedItemId(R.id.menu_profile);
+                    loadFragment(new ProfileFragment());
+                    break;
+
+                default:
+                    bottomNavigationView.setSelectedItemId(R.id.menu_home);
+                    loadFragment(new Home());
+                    break;
+            }
+
+        } else {
+            // ===============================
+            // DEFAULT APP LAUNCH
+            // ===============================
+            if (sessionManager.isAdmin()) {
+                bottomNavigationView.setSelectedItemId(R.id.menu_admin_jobs);
+                loadFragment(new JobListFragment());
+            } else {
+                bottomNavigationView.setSelectedItemId(R.id.menu_home);
+                loadFragment(new Home());
+            }
+        }
+    }
+
+    // ===============================
+    // ROLE-BASED MENU SETUP
     // ===============================
     private void setupBottomNavigationByRole() {
         bottomNavigationView.getMenu().clear();
@@ -99,6 +162,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ===============================
+    // OPEN PROFILE TAB (OPTIONAL USE)
+    // ===============================
+    public void openProfileTab() {
+        if (sessionManager.isAdmin()) {
+            bottomNavigationView.setSelectedItemId(R.id.menu_admin_profile);
+            loadFragment(new ProfileFragment());
+        } else {
+            bottomNavigationView.setSelectedItemId(R.id.menu_profile);
+            loadFragment(new ProfileFragment());
+        }
+    }
+
+    // ===============================
+    // FRAGMENT LOADER
+    // ===============================
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -106,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    // ===============================
+    // LOGIN REDIRECT
+    // ===============================
     private void redirectToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

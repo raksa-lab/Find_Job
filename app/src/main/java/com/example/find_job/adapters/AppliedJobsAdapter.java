@@ -58,15 +58,83 @@ public class AppliedJobsAdapter
         AppliedJob applied = list.get(position);
         Job job = applied.job;
 
-        if (job == null) return;
+        /* =========================
+           JOB TITLE
+           ========================= */
+        h.tvJobTitle.setText(
+                job != null && job.title != null
+                        ? job.title
+                        : applied.jobTitle != null
+                        ? applied.jobTitle
+                        : "—"
+        );
 
-        h.tvTitle.setText(job.title);
-        h.tvCompany.setText(job.company);
-        h.tvLocation.setText(job.location);
-        h.tvStatus.setText(applied.status.toUpperCase());
+        /* =========================
+           STATUS
+           ========================= */
+        h.tvStatus.setText(
+                applied.status != null
+                        ? applied.status.toUpperCase()
+                        : "UNKNOWN"
+        );
 
-        // ===== VISIBILITY LOGIC =====
-        String status = applied.status.toLowerCase();
+        /* =========================
+           COMPANY
+           ========================= */
+        h.tvCompany.setText(
+                applied.jobCompany != null
+                        ? applied.jobCompany
+                        : "—"
+        );
+
+        /* =========================
+           LOCATION
+           ========================= */
+        h.tvLocation.setText(
+                job != null && job.location != null
+                        ? job.location
+                        : "—"
+        );
+
+        /* =========================
+           JOB TYPE (AVAILABLE)
+           ========================= */
+        if (job != null && job.type != null) {
+            h.tvJobType.setText(
+                    job.type.replace("-", " ").toUpperCase()
+            );
+            h.tvJobType.setVisibility(View.VISIBLE);
+        } else {
+            h.tvJobType.setVisibility(View.GONE);
+        }
+
+        /* =========================
+           SALARY (NOT IN API)
+           ========================= */
+        h.tvSalary.setVisibility(View.GONE);
+
+        /* =========================
+           REQUIREMENTS (NOT IN API)
+           ========================= */
+        h.tvRequirementsSmall.setVisibility(View.GONE);
+
+        /* =========================
+           USER REMARK / ADMIN NOTE
+           ========================= */
+        if (applied.coverLetter != null && !applied.coverLetter.isEmpty()) {
+            h.tvAdminNote.setText("Your note: " + applied.coverLetter);
+        } else if (applied.notes != null && !applied.notes.isEmpty()) {
+            h.tvAdminNote.setText("Admin note: " + applied.notes);
+        } else {
+            h.tvAdminNote.setText("No remark");
+        }
+
+        /* =========================
+           WITHDRAW BUTTON LOGIC
+           ========================= */
+        String status = applied.status != null
+                ? applied.status.toLowerCase()
+                : "";
 
         boolean canDelete =
                 status.equals("applied")
@@ -77,13 +145,15 @@ public class AppliedJobsAdapter
                 canDelete ? View.VISIBLE : View.GONE
         );
 
-        // ===== DELETE ACTION =====
+        /* =========================
+           WITHDRAW ACTION
+           ========================= */
         h.btnWithdraw.setOnClickListener(v -> {
 
             new AlertDialog.Builder(context)
-                    .setTitle("Delete Application")
-                    .setMessage("This will permanently delete your application. Continue?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
+                    .setTitle("Withdraw Application")
+                    .setMessage("Do you want to withdraw this application?")
+                    .setPositiveButton("Withdraw", (dialog, which) -> {
 
                         LiveData<Boolean> liveData =
                                 viewModel.delete(applied.id);
@@ -94,18 +164,19 @@ public class AppliedJobsAdapter
                                 liveData.removeObserver(this);
 
                                 if (Boolean.TRUE.equals(success)) {
-                                    list.remove(h.getAdapterPosition());
-                                    notifyItemRemoved(h.getAdapterPosition());
+                                    int pos = h.getAdapterPosition();
+                                    list.remove(pos);
+                                    notifyItemRemoved(pos);
 
                                     Toast.makeText(
                                             context,
-                                            "Application deleted",
+                                            "Application withdrawn",
                                             Toast.LENGTH_SHORT
                                     ).show();
                                 } else {
                                     Toast.makeText(
                                             context,
-                                            "Delete failed",
+                                            "Withdraw failed",
                                             Toast.LENGTH_SHORT
                                     ).show();
                                 }
@@ -124,18 +195,28 @@ public class AppliedJobsAdapter
         return list.size();
     }
 
+    /* =========================
+       VIEW HOLDER
+       ========================= */
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvTitle, tvCompany, tvLocation, tvStatus;
+        TextView tvJobTitle, tvStatus, tvCompany, tvLocation;
+        TextView tvSalary, tvJobType, tvRequirementsSmall, tvAdminNote;
         MaterialButton btnWithdraw;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvTitle = itemView.findViewById(R.id.tvJobTitle);
+            tvJobTitle = itemView.findViewById(R.id.tvJobTitle);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             tvCompany = itemView.findViewById(R.id.tvCompany);
             tvLocation = itemView.findViewById(R.id.tvLocation);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
+
+            tvSalary = itemView.findViewById(R.id.tvSalary);
+            tvJobType = itemView.findViewById(R.id.tvJobType);
+            tvRequirementsSmall = itemView.findViewById(R.id.tvRequirementsSmall);
+            tvAdminNote = itemView.findViewById(R.id.tvAdminNote);
+
             btnWithdraw = itemView.findViewById(R.id.btnWithdraw);
         }
     }

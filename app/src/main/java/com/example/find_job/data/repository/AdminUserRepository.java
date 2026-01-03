@@ -30,6 +30,9 @@ public class AdminUserRepository {
                 .create(AdminUserApiService.class);
     }
 
+    // ===============================
+    // FETCH USERS
+    // ===============================
     public LiveData<List<AdminUser>> fetchUsers() {
 
         MutableLiveData<List<AdminUser>> live = new MutableLiveData<>();
@@ -56,14 +59,18 @@ public class AdminUserRepository {
 
         return live;
     }
-    public LiveData<Boolean> deleteUser(String userId) {
+
+    // ===============================
+    // DISABLE USER (soft delete)
+    // ===============================
+    public LiveData<Boolean> disableUser(String userId) {
 
         MutableLiveData<Boolean> result = new MutableLiveData<>();
 
         DeleteUserRequest body =
-                new DeleteUserRequest("Admin deleted user", true);
+                new DeleteUserRequest("Admin disabled user", true);
 
-        api.deleteUser(userId, body)
+        api.updateDeleteState(userId, body)
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -78,31 +85,60 @@ public class AdminUserRepository {
 
         return result;
     }
+
+    // ===============================
+    // ENABLE USER (restore)
+    // ===============================
+    public LiveData<Boolean> enableUser(String userId) {
+
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+
+        DeleteUserRequest body =
+                new DeleteUserRequest("Admin restored user", false);
+
+        api.updateDeleteState(userId, body)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        result.setValue(response.isSuccessful());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        result.setValue(false);
+                    }
+                });
+
+        return result;
+    }
+
+    // ===============================
+    // USER STATS
+    // ===============================
     public LiveData<AdminUserStats> fetchUserStatsOverview() {
+
         MutableLiveData<AdminUserStats> live = new MutableLiveData<>();
 
-        api.getUserStatsOverview(null).enqueue(new Callback<AdminUserStatsResponse>() {
-            @Override
-            public void onResponse(
-                    Call<AdminUserStatsResponse> call,
-                    Response<AdminUserStatsResponse> response
-            ) {
-                if (response.isSuccessful() && response.body() != null) {
-                    live.setValue(response.body().stats);
-                } else {
-                    live.setValue(null);
-                }
-            }
+        api.getUserStatsOverview(null)
+                .enqueue(new Callback<AdminUserStatsResponse>() {
+                    @Override
+                    public void onResponse(
+                            Call<AdminUserStatsResponse> call,
+                            Response<AdminUserStatsResponse> response
+                    ) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            live.setValue(response.body().stats);
+                        } else {
+                            live.setValue(null);
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<AdminUserStatsResponse> call, Throwable t) {
-                live.setValue(null);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<AdminUserStatsResponse> call, Throwable t) {
+                        live.setValue(null);
+                    }
+                });
 
         return live;
     }
-
-
-
 }

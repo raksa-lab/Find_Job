@@ -72,8 +72,6 @@ public class JobDetailActivity extends AppCompatActivity {
         // GET INTENT DATA
         // =========================
         Intent intent = getIntent();
-        boolean openedFromApplied =
-                intent.getBooleanExtra("fromApplied", false);
 
         jobId = intent.getStringExtra("jobId");
         jobTitle = intent.getStringExtra("title");
@@ -81,6 +79,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         tvTitle.setText(jobTitle != null ? jobTitle : "—");
         tvCompany.setText(jobCompany != null ? jobCompany : "—");
+
         tvLocation.setText(
                 intent.getStringExtra("location") != null
                         ? intent.getStringExtra("location")
@@ -93,19 +92,12 @@ public class JobDetailActivity extends AppCompatActivity {
                         : "No description available."
         );
 
-        // =========================
-        // SALARY
-        // =========================
         int salary = intent.getIntExtra("salary", 0);
         tvSalaryAmount.setText(
                 salary > 0 ? "$" + salary + " / m" : "Negotiable"
         );
 
-        // =========================
-        // EMPLOYMENT TYPE
-        // =========================
         String employmentType = intent.getStringExtra("employmentType");
-
         if (employmentType != null && !employmentType.isEmpty()) {
             tvEmploymentType.setText(formatEmploymentType(employmentType));
             tvEmploymentType.setVisibility(View.VISIBLE);
@@ -113,9 +105,6 @@ public class JobDetailActivity extends AppCompatActivity {
             tvEmploymentType.setVisibility(View.GONE);
         }
 
-        // =========================
-        // REQUIREMENTS
-        // =========================
         ArrayList<String> reqList =
                 intent.getStringArrayListExtra("requirements");
 
@@ -130,17 +119,10 @@ public class JobDetailActivity extends AppCompatActivity {
         }
 
         // =========================
-        // FROM APPLIED JOBS
-        // =========================
-        if (openedFromApplied) {
-            btnApply.setVisibility(View.GONE);
-            btnViewStatus.setVisibility(View.VISIBLE);
-        }
-
-        // =========================
-        // ACTIONS
+        // BUTTON ACTIONS
         // =========================
         btnApply.setOnClickListener(v -> checkBeforeApply());
+        btnSave.setOnClickListener(v -> toggleSave());
 
         btnViewStatus.setOnClickListener(v -> {
             Intent i = new Intent(this, MainActivity.class);
@@ -150,21 +132,50 @@ public class JobDetailActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-        btnSave.setOnClickListener(v -> toggleSave());
         fabShare.setOnClickListener(v -> shareJob());
+
+        // =========================
+        // 🔥 SYNC STATE ON LOAD
+        // =========================
+        syncInitialState();
     }
 
     // =========================
-    // APPLY FLOW (CV + DUPLICATE CHECK)
+    // SYNC APPLY & SAVE STATE
+    // =========================
+    private void syncInitialState() {
+
+        if (jobId == null) return;
+
+        // CHECK APPLY STATUS
+        applicationRepository.hasApplied(jobId)
+                .observe(this, applied -> {
+                    if (Boolean.TRUE.equals(applied)) {
+                        btnApply.setEnabled(false);
+                        btnApply.setText("Applied");
+                        btnViewStatus.setVisibility(View.VISIBLE);
+                    } else {
+                        btnApply.setEnabled(true);
+                        btnApply.setText("Apply");
+                        btnViewStatus.setVisibility(View.GONE);
+                    }
+                });
+
+        // CHECK SAVED STATUS (USING CACHE)
+        favoriteRepository.isFavoriteLive(jobId)
+                .observe(this, saved -> {
+                    setSavedUI(Boolean.TRUE.equals(saved));
+                });
+
+    }
+
+    // =========================
+    // APPLY FLOW
     // =========================
     private void checkBeforeApply() {
 
-        if (jobId == null) {
-            Toast.makeText(this, "Invalid job", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (jobId == null) return;
 
-        // 1️⃣ Check CV exists
         userRepository.hasResume().observe(this, hasResume -> {
             if (!hasResume) {
                 Toast.makeText(
@@ -175,30 +186,18 @@ public class JobDetailActivity extends AppCompatActivity {
                 return;
             }
 
-            // 2️⃣ Check already applied
             applicationRepository.hasApplied(jobId).observe(this, applied -> {
                 if (applied) {
-                    Toast.makeText(
-                            this,
-                            "You already applied for this job",
-                            Toast.LENGTH_SHORT
-                    ).show();
-
                     btnApply.setEnabled(false);
                     btnApply.setText("Applied");
                     btnViewStatus.setVisibility(View.VISIBLE);
                     return;
                 }
-
-                // 3️⃣ Show apply dialog
                 showApplyDialog();
             });
         });
     }
 
-    // =========================
-    // APPLY DIALOG
-    // =========================
     private void showApplyDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -217,51 +216,30 @@ public class JobDetailActivity extends AppCompatActivity {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setOnClickListener(v -> {
 
-                    String coverLetter = input.getText().toString();
-
-                    applicationRepository.apply(jobId, coverLetter)
+                    applicationRepository
+                            .apply(jobId, input.getText().toString())
                             .observe(this, success -> {
-
                                 if (success) {
-                                    Toast.makeText(
-                                            this,
-                                            "Application submitted",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-
                                     btnApply.setEnabled(false);
                                     btnApply.setText("Applied");
                                     btnViewStatus.setVisibility(View.VISIBLE);
                                     dialog.dismiss();
-                                } else {
-                                    Toast.makeText(
-                                            this,
-                                            "Failed to apply. Try again.",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
                                 }
                             });
                 });
     }
 
     // =========================
-    // SAVE / UNSAVE JOB
+    // SAVE / UNSAVE
     // =========================
     private void toggleSave() {
-
-        if (jobId == null) {
-            Toast.makeText(this, "Unable to save job", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         if (!isSaved) {
             favoriteRepository.addFavorite(jobId);
             setSavedUI(true);
-            Toast.makeText(this, "Saved for later", Toast.LENGTH_SHORT).show();
         } else {
             favoriteRepository.removeFavorite(jobId);
             setSavedUI(false);
-            Toast.makeText(this, "Removed from saved", Toast.LENGTH_SHORT).show();
         }
     }
 

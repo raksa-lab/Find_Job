@@ -44,14 +44,15 @@ public class RegisterActivity extends AppCompatActivity {
 
             viewModel.register(name, email, password).observe(this, response -> {
 
-                if (response == null || response.uid == null) {
+                if (response == null || !response.isSuccess() || response.getUser() == null) {
                     Toast.makeText(this, "Registration failed!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-                finish();   // return to Login page
+                finish(); // go back to Login
             });
+
         });
 
         tvLoginInstead.setOnClickListener(v -> finish());

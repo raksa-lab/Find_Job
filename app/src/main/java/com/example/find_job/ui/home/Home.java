@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.example.find_job.adapters.JobAdapter;
 import com.example.find_job.data.models.BlogItem;
 import com.example.find_job.data.models.Job;
 import com.example.find_job.ui.job_detail.JobDetailActivity;
+import com.example.find_job.ui.profile.ProfileViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,9 @@ public class Home extends Fragment {
     private RecyclerView rvHomeJobs;
     private JobAdapter jobAdapter;
     private HomeViewModel viewModel;
+    private ProfileViewModel profileViewModel;
+
+    private TextView tvUserName;
 
     private final Handler sliderHandler = new Handler(Looper.getMainLooper());
 
@@ -45,21 +50,52 @@ public class Home extends Fragment {
     ) {
         View view = inflater.inflate(R.layout.home, container, false);
 
-        // INIT VIEWMODEL
+        // =====================
+        // INIT VIEWMODELS
+        // =====================
         viewModel = new ViewModelProvider(requireActivity())
                 .get(HomeViewModel.class);
 
-        TextView tvJobCount = view.findViewById(R.id.tv_job_count);
+        profileViewModel = new ViewModelProvider(requireActivity())
+                .get(ProfileViewModel.class);
+
+        // =====================
+        // USER NAME
+        // =====================
+        tvUserName = view.findViewById(R.id.user_name);
+
+        profileViewModel.getProfile().observe(
+                getViewLifecycleOwner(),
+                profile -> {
+                    if (profile != null && profile.fullName != null) {
+                        tvUserName.setText(profile.fullName);
+                    } else {
+                        tvUserName.setText("User");
+                    }
+                }
+        );
+        View profileCard = view.findViewById(R.id.profile_image);
+
+        profileCard.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).openProfileTab();
+            }
+        });
 
         // =====================
         // JOB COUNT
         // =====================
+        TextView tvJobCount = view.findViewById(R.id.tv_job_count);
+
         viewModel.getTotalJobs().observe(getViewLifecycleOwner(), total -> {
             if (total != null) {
                 tvJobCount.setText(String.valueOf(total));
             }
         });
 
+        // =====================
+        // JOB LIST
+        // =====================
         blogSlider = view.findViewById(R.id.blogSlider);
         rvHomeJobs = view.findViewById(R.id.rvHomeJobs);
         rvHomeJobs.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -96,7 +132,6 @@ public class Home extends Fragment {
                 limitedJobs.add(jobs.get(i));
             }
 
-            // ✅ CORRECT CONSTRUCTOR
             jobAdapter = new JobAdapter(
                     requireContext(),
                     limitedJobs,

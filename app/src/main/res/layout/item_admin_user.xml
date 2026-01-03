@@ -37,25 +37,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
+            <!-- STATUS -->
             <TextView
-                android:id="@+id/tv_role"
+                android:id="@+id/tv_status"
                 android:textSize="13sp"
-                android:textColor="#7A72FD"
+                android:textStyle="bold"
                 android:layout_marginTop="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <!-- DELETE ICON -->
-        <ImageView
-            android:id="@+id/btn_delete"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_delete"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="Delete User"
-            app:tint="#FF3B30" />
+        <!-- DISABLE BUTTON -->
+        <Button
+            android:id="@+id/btn_disable"
+            android:text="Disable"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#FF3B30"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- ENABLE BUTTON -->
+        <Button
+            android:id="@+id/btn_enable"
+            android:text="Enable"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#34C759"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

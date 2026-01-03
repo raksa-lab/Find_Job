@@ -1,17 +1,38 @@
 package com.example.find_job.data.models;
 
 public class RegisterResponse {
-    public int status;
-    public String error;
-    public User data;
-    public String uid;
+
+    private boolean success;
+    private String message;
+    private User user;
+
     public boolean isSuccess() {
-        return status == 200 && error == null;
+        return success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public static class User {
+        private String uid;
+        private String email;
+        private String displayName;
 
-        public String fullName;
-        public String email;
+        public String getUid() {
+            return uid;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
     }
 }

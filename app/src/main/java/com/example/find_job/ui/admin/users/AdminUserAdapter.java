@@ -1,10 +1,11 @@
 package com.example.find_job.ui.admin.users;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,27 +37,53 @@ public class AdminUserAdapter
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
+
         AdminUser user = users.get(position);
 
-        h.name.setText(user.fullName);
-        h.email.setText(user.email);
-        h.role.setText(user.role.toUpperCase());
+        h.name.setText(user.getFullName());
+        h.email.setText(user.getEmail());
 
-        // DELETE USER
-        h.delete.setOnClickListener(v -> {
+
+        // ===============================
+        // USER STATUS + BUTTON VISIBILITY
+        // ===============================
+        if (user.isDeleted()) {
+            h.status.setText("Disabled");
+            h.status.setTextColor(Color.RED);
+
+            h.btnEnable.setVisibility(View.VISIBLE);
+            h.btnDisable.setVisibility(View.GONE);
+        } else {
+            h.status.setText("Active");
+            h.status.setTextColor(Color.GREEN);
+
+            h.btnDisable.setVisibility(View.VISIBLE);
+            h.btnEnable.setVisibility(View.GONE);
+        }
+
+        // ===============================
+        // DISABLE USER
+        // ===============================
+        h.btnDisable.setOnClickListener(v -> {
             new AlertDialog.Builder(v.getContext())
-                    .setTitle("Delete User")
-                    .setMessage("Are you sure you want to delete this user?")
-                    .setPositiveButton("Delete", (d, w) -> {
+                    .setTitle("Disable User")
+                    .setMessage("Are you sure you want to disable this user?")
+                    .setPositiveButton("Disable", (d, w) -> {
+                        viewModel.disableUser(user.getId());
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
 
-                        viewModel.deleteUser(user.id)
-                                .observeForever(success -> {
-                                    if (success) {
-                                        users.remove(position);
-                                        notifyItemRemoved(position);
-                                    }
-                                });
-
+        // ===============================
+        // ENABLE USER
+        // ===============================
+        h.btnEnable.setOnClickListener(v -> {
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle("Enable User")
+                    .setMessage("Do you want to re-enable this user?")
+                    .setPositiveButton("Enable", (d, w) -> {
+                        viewModel.enableUser(user.getId());
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
@@ -68,16 +95,22 @@ public class AdminUserAdapter
         return users.size();
     }
 
+    // ===============================
+    // VIEW HOLDER
+    // ===============================
     static class VH extends RecyclerView.ViewHolder {
-        TextView name, email, role;
-        ImageView delete;
+
+        TextView name, email, status;
+        Button btnDisable, btnEnable;
 
         VH(View v) {
             super(v);
             name = v.findViewById(R.id.tv_name);
             email = v.findViewById(R.id.tv_email);
-            role = v.findViewById(R.id.tv_role);
-            delete = v.findViewById(R.id.btn_delete);
+            status = v.findViewById(R.id.tv_status);
+            btnDisable = v.findViewById(R.id.btn_disable);
+            btnEnable = v.findViewById(R.id.btn_enable);
         }
     }
+
 }

@@ -6,7 +6,6 @@ import com.example.find_job.data.models.UserListResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Path;
@@ -14,6 +13,9 @@ import retrofit2.http.Query;
 
 public interface AdminUserApiService {
 
+    // =========================
+    // GET ALL USERS
+    // =========================
     @GET("admin/users")
     Call<UserListResponse> getAllUsers(
             @Query("search") String search,
@@ -23,15 +25,23 @@ public interface AdminUserApiService {
             @Query("page") int page,
             @Query("limit") int limit
     );
+
+    // =========================
+    // DISABLE / ENABLE USER
+    // deleteData = true  -> Disable
+    // deleteData = false -> Enable (Restore)
+    // =========================
     @HTTP(method = "DELETE", path = "admin/users/{id}", hasBody = true)
-    Call<Void> deleteUser(
+    Call<Void> updateDeleteState(
             @Path("id") String userId,
             @Body DeleteUserRequest body
     );
+
+    // =========================
+    // USER STATS
+    // =========================
     @GET("admin/users/stats/overview")
     Call<AdminUserStatsResponse> getUserStatsOverview(
             @Query("timeRange") String timeRange
     );
-
-
 }

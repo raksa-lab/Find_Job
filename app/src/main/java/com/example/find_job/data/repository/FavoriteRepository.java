@@ -160,4 +160,45 @@ public class FavoriteRepository {
             ) { }
         });
     }
+    // =========================
+// CHECK IF FAVORITE (LIVE) ✅
+// =========================
+    public LiveData<Boolean> isFavoriteLive(String jobId) {
+
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+
+        api.getFavorites().enqueue(new Callback<FavoriteResponse>() {
+            @Override
+            public void onResponse(
+                    Call<FavoriteResponse> call,
+                    Response<FavoriteResponse> response
+            ) {
+                boolean found = false;
+
+                if (response.isSuccessful()
+                        && response.body() != null
+                        && response.body().favorites != null) {
+
+                    favoriteIds.clear();
+
+                    for (Job job : response.body().favorites) {
+                        favoriteIds.add(job.id);
+                        if (job.id.equals(jobId)) {
+                            found = true;
+                        }
+                    }
+                }
+
+                result.setValue(found);
+            }
+
+            @Override
+            public void onFailure(Call<FavoriteResponse> call, Throwable t) {
+                result.setValue(false);
+            }
+        });
+
+        return result;
+    }
+
 }
