@@ -105,13 +105,7 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
             tvUserNote.setText("No message from user");
         }
 
-        // ADMIN REPLY (SAFE OBJECT HANDLING)
-        String adminReply = app.getAdditionalInfoText();
-        if (adminReply != null && !adminReply.trim().isEmpty()) {
-            tvAdminReply.setText(adminReply);
-        } else {
-            tvAdminReply.setText("No reply yet");
-        }
+
 
         // VIEW CV
         if (app.resumeUrl != null && !app.resumeUrl.isEmpty()) {

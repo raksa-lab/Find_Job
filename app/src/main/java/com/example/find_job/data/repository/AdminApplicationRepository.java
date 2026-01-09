@@ -32,7 +32,7 @@ public class AdminApplicationRepository {
     }
 
     // =====================================================
-    // GET ALL APPLICATIONS (ADMIN LIST)
+    // GET ALL APPLICATIONS
     // =====================================================
     public LiveData<List<AdminApplication>> getApplications() {
 
@@ -46,9 +46,7 @@ public class AdminApplicationRepository {
                             Response<AdminApplicationsResponse> response
                     ) {
                         if (response.isSuccessful()
-                                && response.body() != null
-                                && response.body().applications != null) {
-
+                                && response.body() != null) {
                             result.setValue(response.body().applications);
                         } else {
                             result.setValue(null);
@@ -83,7 +81,6 @@ public class AdminApplicationRepository {
                     ) {
                         if (response.isSuccessful()
                                 && response.body() != null) {
-
                             result.setValue(response.body().application);
                         } else {
                             result.setValue(null);
@@ -103,8 +100,7 @@ public class AdminApplicationRepository {
     }
 
     // =====================================================
-    // UPDATE APPLICATION STATUS (INTERNAL NOTE)
-    // NOT VISIBLE TO USER
+    // UPDATE APPLICATION STATUS (INTERNAL NOTE ONLY)
     // =====================================================
     public LiveData<Boolean> updateStatus(
             String applicationId,
@@ -144,8 +140,9 @@ public class AdminApplicationRepository {
     }
 
     // =====================================================
-    // ADMIN → USER REPLY (additionalInfo)
-    // ✅ CORRECT ENDPOINT
+    // ADMIN → USER NOTE (VISIBLE)
+    // ✔ CORRECT PAYLOAD
+    // ✔ MATCHES BACKEND
     // =====================================================
     public LiveData<Boolean> replyToUser(
             String applicationId,
@@ -155,21 +152,22 @@ public class AdminApplicationRepository {
         MutableLiveData<Boolean> result = new MutableLiveData<>();
 
         Map<String, Object> body = new HashMap<>();
+        body.put("notes", adminReply);     // REQUIRED
+        body.put("isInternal", false);     // user-visible
+        body.put("notifyUser", true);      // send notification
 
-        Map<String, Object> notes = new HashMap<>();
-        notes.put("adminNotes", List.of(adminReply));
-
-        body.put("notes", notes);
-
-
-        api.replyToUser(applicationId, body)
+        api.addAdminNote(applicationId, body)
                 .enqueue(new Callback<BaseResponse>() {
                     @Override
                     public void onResponse(
                             Call<BaseResponse> call,
                             Response<BaseResponse> response
                     ) {
-                        result.setValue(response.isSuccessful());
+                        result.setValue(
+                                response.isSuccessful()
+                                        && response.body() != null
+                                        && response.body().success
+                        );
                     }
 
                     @Override

@@ -24,6 +24,7 @@ public class AdminApplicationsFragment extends Fragment {
     private RecyclerView rv;
     private TextView tvEmpty;
     private AdminApplicationsViewModel viewModel;
+    private AdminApplicationsAdapter adapter;
 
     @Nullable
     @Override
@@ -38,6 +39,34 @@ public class AdminApplicationsFragment extends Fragment {
         tvEmpty = v.findViewById(R.id.tvEmptyState);
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        rv.setHasFixedSize(true);
+
+        adapter = new AdminApplicationsAdapter(
+                requireContext(),
+                new AdminApplicationsAdapter.OnAction() {
+                    @Override
+                    public void onApprove(AdminApplication app) {
+                        showUpdateDialog(app, "accepted");
+                    }
+
+                    @Override
+                    public void onReject(AdminApplication app) {
+                        showUpdateDialog(app, "rejected");
+                    }
+
+                    @Override
+                    public void onReply(AdminApplication app) {
+                        showReplyDialog(app);
+                    }
+
+                    @Override
+                    public void onDelete(AdminApplication app) {
+                        delete(app.id);
+                    }
+                }
+        );
+
+        rv.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this)
                 .get(AdminApplicationsViewModel.class);
@@ -48,7 +77,7 @@ public class AdminApplicationsFragment extends Fragment {
     }
 
     // ===============================
-    // OBSERVE APPLICATIONS
+    // OBSERVE DATA
     // ===============================
     private void observeApplications() {
         viewModel.getApplications()
@@ -62,38 +91,12 @@ public class AdminApplicationsFragment extends Fragment {
 
                     tvEmpty.setVisibility(View.GONE);
                     rv.setVisibility(View.VISIBLE);
-
-                    rv.setAdapter(new AdminApplicationsAdapter(
-                            requireContext(),
-                            list,
-                            new AdminApplicationsAdapter.OnAction() {
-
-                                @Override
-                                public void onApprove(AdminApplication app) {
-                                    showUpdateDialog(app, "accepted");
-                                }
-
-                                @Override
-                                public void onReject(AdminApplication app) {
-                                    showUpdateDialog(app, "rejected");
-                                }
-
-                                @Override
-                                public void onReply(AdminApplication app) {
-                                    showReplyDialog(app); // ✅ FIXED
-                                }
-
-                                @Override
-                                public void onDelete(AdminApplication app) {
-                                    delete(app.id);
-                                }
-                            }
-                    ));
+                    adapter.update(list);
                 });
     }
 
     // ===============================
-    // ADMIN REPLY (additionalInfo)
+    // ADMIN REPLY
     // ===============================
     private void showReplyDialog(AdminApplication app) {
 
@@ -117,16 +120,13 @@ public class AdminApplicationsFragment extends Fragment {
                     }
 
                     viewModel.replyToUser(app.id, reply)
-                            .observe(getViewLifecycleOwner(), ok -> {
-
-                                Toast.makeText(
-                                        requireContext(),
-                                        ok ? "Reply sent" : "Failed to send reply",
-                                        Toast.LENGTH_SHORT
-                                ).show();
-
-                                if (ok) observeApplications();
-                            });
+                            .observe(getViewLifecycleOwner(), ok ->
+                                    Toast.makeText(
+                                            requireContext(),
+                                            ok ? "Reply sent" : "Failed to send reply",
+                                            Toast.LENGTH_SHORT
+                                    ).show()
+                            );
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
@@ -135,59 +135,43 @@ public class AdminApplicationsFragment extends Fragment {
     // ===============================
     // UPDATE STATUS
     // ===============================
-    private void showUpdateDialog(
-            AdminApplication app,
-            String status
-    ) {
+    private void showUpdateDialog(AdminApplication app, String status) {
+
         EditText etNote = new EditText(requireContext());
         etNote.setHint("Internal note (optional)");
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Update Application")
                 .setView(etNote)
-                .setPositiveButton("Submit", (dialog, which) -> {
-                    update(
-                            app.id,
-                            status,
-                            etNote.getText().toString().trim()
-                    );
-                })
+                .setPositiveButton("Submit", (d, w) ->
+                        update(app.id, status, etNote.getText().toString().trim())
+                )
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    private void update(
-            String id,
-            String status,
-            String note
-    ) {
+    private void update(String id, String status, String note) {
         viewModel.updateStatus(id, status, note)
-                .observe(getViewLifecycleOwner(), ok -> {
-
-                    Toast.makeText(
-                            requireContext(),
-                            ok ? "Application updated" : "Update failed",
-                            Toast.LENGTH_SHORT
-                    ).show();
-
-                    if (ok) observeApplications();
-                });
+                .observe(getViewLifecycleOwner(), ok ->
+                        Toast.makeText(
+                                requireContext(),
+                                ok ? "Application updated" : "Update failed",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                );
     }
 
     // ===============================
-    // DELETE APPLICATION
+    // DELETE
     // ===============================
     private void delete(String id) {
         viewModel.deleteApplication(id)
-                .observe(getViewLifecycleOwner(), ok -> {
-
-                    Toast.makeText(
-                            requireContext(),
-                            ok ? "Application deleted" : "Delete failed",
-                            Toast.LENGTH_SHORT
-                    ).show();
-
-                    if (ok) observeApplications();
-                });
+                .observe(getViewLifecycleOwner(), ok ->
+                        Toast.makeText(
+                                requireContext(),
+                                ok ? "Application deleted" : "Delete failed",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                );
     }
 }

@@ -18,13 +18,7 @@ import retrofit2.http.Query;
 public interface AdminApplicationApiService {
 
     // =====================================================
-    // GET ALL APPLICATIONS (NO PAGINATION)
-    // =====================================================
-    @GET("admin/applications")
-    Call<AdminApplicationsResponse> getAdminApplications();
-
-    // =====================================================
-    // GET ALL APPLICATIONS (WITH PAGINATION)
+    // GET ALL APPLICATIONS
     // =====================================================
     @GET("admin/applications")
     Call<AdminApplicationsResponse> getAdminApplications(
@@ -50,11 +44,11 @@ public interface AdminApplicationApiService {
     );
 
     // =====================================================
-    // ADMIN → USER REPLY (additionalInfo)
-    // ✅ CORRECT ENDPOINT
+    // ADD ADMIN NOTE (USER-VISIBLE OR INTERNAL)
+    // ✔ CORRECT ENDPOINT
     // =====================================================
     @PATCH("admin/applications/{id}/notes")
-    Call<BaseResponse> replyToUser(
+    Call<BaseResponse> addAdminNote(
             @Path("id") String applicationId,
             @Body Map<String, Object> body
     );

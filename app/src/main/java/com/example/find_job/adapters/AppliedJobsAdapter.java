@@ -2,11 +2,11 @@ package com.example.find_job.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.widget.Toast;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.find_job.R;
 import com.example.find_job.data.models.AppliedJob;
-import com.example.find_job.data.models.Job;
 import com.example.find_job.ui.application.AppliedJobsViewModel;
 import com.google.android.material.button.MaterialButton;
 
@@ -23,9 +22,6 @@ import java.util.List;
 public class AppliedJobsAdapter
         extends RecyclerView.Adapter<AppliedJobsAdapter.ViewHolder> {
 
-    // =========================
-    // CALLBACK
-    // =========================
     public interface OnNoteClickListener {
         void onNoteClick(String applicationId);
     }
@@ -36,9 +32,6 @@ public class AppliedJobsAdapter
     private final AppliedJobsViewModel viewModel;
     private final OnNoteClickListener noteClickListener;
 
-    // =========================
-    // CONSTRUCTOR
-    // =========================
     public AppliedJobsAdapter(
             Context context,
             LifecycleOwner lifecycleOwner,
@@ -53,9 +46,6 @@ public class AppliedJobsAdapter
         this.noteClickListener = noteClickListener;
     }
 
-    // =========================
-    // VIEW HOLDER
-    // =========================
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(
@@ -67,9 +57,6 @@ public class AppliedJobsAdapter
         return new ViewHolder(view);
     }
 
-    // =========================
-    // BIND
-    // =========================
     @Override
     public void onBindViewHolder(
             @NonNull ViewHolder h,
@@ -77,16 +64,15 @@ public class AppliedJobsAdapter
     ) {
 
         AppliedJob applied = list.get(position);
-        Job job = applied.job;
 
         // =========================
         // JOB TITLE
         // =========================
         h.tvJobTitle.setText(
-                job != null && job.title != null
-                        ? job.title
-                        : applied.jobTitle != null
+                applied.jobTitle != null
                         ? applied.jobTitle
+                        : applied.job != null && applied.job.title != null
+                        ? applied.job.title
                         : "—"
         );
 
@@ -105,6 +91,8 @@ public class AppliedJobsAdapter
         h.tvCompany.setText(
                 applied.jobCompany != null
                         ? applied.jobCompany
+                        : applied.job != null
+                        ? applied.job.company
                         : "—"
         );
 
@@ -112,58 +100,31 @@ public class AppliedJobsAdapter
         // LOCATION
         // =========================
         h.tvLocation.setText(
-                job != null && job.location != null
-                        ? job.location
+                applied.job != null && applied.job.location != null
+                        ? applied.job.location
                         : "—"
         );
 
         // =========================
-        // JOB TYPE
-        // =========================
-        if (job != null && job.type != null) {
-            h.tvJobType.setText(job.type.replace("-", " ").toUpperCase());
-            h.tvJobType.setVisibility(View.VISIBLE);
-        } else {
-            h.tvJobType.setVisibility(View.GONE);
-        }
-
-        // =========================
-        // HIDE UNUSED FIELDS
+        // HIDE UNUSED
         // =========================
         h.tvSalary.setVisibility(View.GONE);
+        h.tvJobType.setVisibility(View.GONE);
         h.tvRequirementsSmall.setVisibility(View.GONE);
 
-        // =========================
-        // USER MESSAGE (SAFE ORDER)
-        // =========================
-        // =========================
-// USER MESSAGE (FINAL SAFE ORDER)
-// =========================
-        String userMessage = null;
+        // =====================================================
+        // ✅ ADMIN NOTE (USER VISIBLE)
+        // =====================================================
+        String adminNote = applied.getLatestAdminNote();
 
-// 1️⃣ NEW: notes.userNotes (preferred)
-        if (applied.notes != null
-                && applied.notes.userNotes != null
-                && !applied.notes.userNotes.trim().isEmpty()) {
-            userMessage = applied.notes.userNotes;
+        if (adminNote == null) {
+            adminNote = applied.getAdditionalInfoText();
         }
-
-// 2️⃣ NEW: additionalInfo (object-safe)
-        else if (applied.getAdditionalInfoText() != null) {
-            userMessage = applied.getAdditionalInfoText();
-        }
-
-// 3️⃣ FALLBACK: cover letter
-        else if (applied.coverLetter != null
-                && !applied.coverLetter.trim().isEmpty()) {
-            userMessage = applied.coverLetter;
-        }
-
 
         h.tvAdminNote.setText(
-                userMessage != null
-                        ? "Your note: " + userMessage
-                        : "Your note: —"
+                adminNote != null
+                        ? "Admin note: " + adminNote
+                        : "Admin note: —"
         );
         h.tvAdminNote.setVisibility(View.VISIBLE);
 
@@ -171,21 +132,20 @@ public class AppliedJobsAdapter
         // WITHDRAW BUTTON
         // =========================
         boolean canWithdraw =
-                !"ACCEPTED".equalsIgnoreCase(applied.status)
-                        && !"REJECTED".equalsIgnoreCase(applied.status);
+                applied.status == null
+                        || (!"ACCEPTED".equalsIgnoreCase(applied.status)
+                        && !"REJECTED".equalsIgnoreCase(applied.status));
 
-        h.btnWithdraw.setVisibility(
-                canWithdraw ? View.VISIBLE : View.GONE
-        );
+        h.btnWithdraw.setVisibility(canWithdraw ? View.VISIBLE : View.GONE);
 
         h.btnWithdraw.setOnClickListener(v ->
                 new AlertDialog.Builder(context)
                         .setTitle("Withdraw Application")
                         .setMessage("Do you want to withdraw this application?")
-                        .setPositiveButton("Withdraw", (dialog, which) ->
+                        .setPositiveButton("Withdraw", (d, w) ->
                                 viewModel.delete(applied.id)
-                                        .observe(lifecycleOwner, success -> {
-                                            if (Boolean.TRUE.equals(success)) {
+                                        .observe(lifecycleOwner, ok -> {
+                                            if (Boolean.TRUE.equals(ok)) {
                                                 int pos = h.getAdapterPosition();
                                                 if (pos != RecyclerView.NO_POSITION) {
                                                     list.remove(pos);
@@ -210,7 +170,7 @@ public class AppliedJobsAdapter
         );
 
         // =========================
-        // OPEN NOTES
+        // OPEN DETAIL
         // =========================
         h.itemView.setOnClickListener(v ->
                 noteClickListener.onNoteClick(applied.id)
@@ -222,30 +182,23 @@ public class AppliedJobsAdapter
         return list == null ? 0 : list.size();
     }
 
-    // =========================
-    // HOLDER
-    // =========================
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvJobTitle, tvStatus, tvCompany, tvLocation;
         TextView tvSalary, tvJobType, tvRequirementsSmall, tvAdminNote;
         MaterialButton btnWithdraw;
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            tvJobTitle = itemView.findViewById(R.id.tvJobTitle);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvCompany = itemView.findViewById(R.id.tvCompany);
-            tvLocation = itemView.findViewById(R.id.tvLocation);
-
-            tvSalary = itemView.findViewById(R.id.tvSalary);
-            tvJobType = itemView.findViewById(R.id.tvJobType);
-            tvRequirementsSmall =
-                    itemView.findViewById(R.id.tvRequirementsSmall);
-            tvAdminNote = itemView.findViewById(R.id.tvAdminNote);
-
-            btnWithdraw = itemView.findViewById(R.id.btnWithdraw);
+        ViewHolder(@NonNull View v) {
+            super(v);
+            tvJobTitle = v.findViewById(R.id.tvJobTitle);
+            tvStatus = v.findViewById(R.id.tvStatus);
+            tvCompany = v.findViewById(R.id.tvCompany);
+            tvLocation = v.findViewById(R.id.tvLocation);
+            tvSalary = v.findViewById(R.id.tvSalary);
+            tvJobType = v.findViewById(R.id.tvJobType);
+            tvRequirementsSmall = v.findViewById(R.id.tvRequirementsSmall);
+            tvAdminNote = v.findViewById(R.id.tvAdminNote);
+            btnWithdraw = v.findViewById(R.id.btnWithdraw);
         }
     }
 }
