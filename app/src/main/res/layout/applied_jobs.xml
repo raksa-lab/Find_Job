@@ -3,7 +3,7 @@
     android:id="@+id/layout_applied_jobs"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#F8F9FD">
 
     <!-- ========================= -->
     <!-- EMPTY STATE -->

@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:orientation="vertical"
-            android:background="@drawable/edit_profile_header_gradient"
+
             android:padding="20dp">
 
             <!-- Back Button -->
@@ -33,11 +33,11 @@
                 android:foreground="?attr/selectableItemBackgroundBorderless">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_arrow_back"
-                    app:tint="#FFFFFF" />
+                    app:tint="#000000" />
             </FrameLayout>
 
             <!-- Profile Image Section -->
@@ -60,7 +60,7 @@
                         android:id="@+id/iv_profile_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/ic_user_round"
+                        android:src="@drawable/profile"
                         android:scaleType="centerCrop" />
 
                     <!-- Edit Photo Badge -->
@@ -70,17 +70,12 @@
                         android:layout_height="32dp"
                         android:layout_gravity="bottom|end"
                         android:layout_margin="2dp"
-                        android:background="@drawable/bg_circle_primary"
+
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_camera"
-                            app:tint="#FFFFFF" />
+
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
 

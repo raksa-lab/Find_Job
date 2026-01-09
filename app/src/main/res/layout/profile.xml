@@ -24,7 +24,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
-                android:background="#7A72FD"
+
                 app:layout_collapseMode="parallax">
 
                 <!-- Decorative Elements -->
