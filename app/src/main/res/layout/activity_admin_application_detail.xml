@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:orientation="vertical">
+
+    <!-- JOB TITLE -->
+    <TextView
+        android:id="@+id/tvJobTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Title"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <!-- STATUS -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STATUS"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- USER NOTE -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User message"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvUserNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No message from user"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+    <!-- ADMIN REPLY -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Admin reply"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvAdminReply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No reply yet"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+    <!-- REPLY BUTTON -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnReply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reply"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_marginTop="16dp"/>
+
+    <!-- VIEW CV -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnViewCv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View CV (PDF)"
+        app:icon="@drawable/ic_document"
+        app:iconGravity="textStart"
+        android:visibility="gone"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

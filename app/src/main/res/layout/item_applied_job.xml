@@ -4,12 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="12dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp"
     app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
@@ -24,58 +27,96 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Job Title -->
-            <TextView
-                android:id="@+id/tvJobTitle"
-                android:layout_width="wrap_content"
+            <!-- HEADER WITH ICON AND TITLE -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="UI/UX Designer"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#1A1A1A"
-                android:maxLines="2"
-                android:ellipsize="end" />
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Applied"
-                android:textStyle="bold"
-                android:textSize="12sp"
-                android:textColor="#6C63FF"
-                android:layout_marginTop="4dp"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <!-- Company • Location -->
+                <!-- Job Icon -->
+                <LinearLayout
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/job_icon_background"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_briefcase"
+                        app:tint="#7C6FDC" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <!-- Job Title -->
+                    <TextView
+                        android:id="@+id/tvJobTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="UI/UX Designer"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A1A"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <!-- Company -->
+                    <TextView
+                        android:id="@+id/tvCompany"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Google"
+                        android:textColor="#666666"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Status Badge -->
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Applied"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:textColor="#7C6FDC"
+                    android:background="@drawable/status_applied_background"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:layout_marginStart="12dp"/>
+            </LinearLayout>
+
+            <!-- Location with Icon -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="6dp">
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
 
-                <TextView
-                    android:id="@+id/tvCompany"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Google"
-                    android:textColor="#616161"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" • "
-                    android:textColor="#BDBDBD"
-                    android:textSize="14sp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp" />
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_location"
+                    app:tint="#999999" />
 
                 <TextView
                     android:id="@+id/tvLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="California, USA"
-                    android:textColor="#757575"
-                    android:textSize="14sp" />
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
             <!-- Tags: Salary + Job Type -->
@@ -83,18 +124,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="14dp">
+                android:layout_marginTop="12dp">
 
                 <!-- Salary Tag -->
                 <TextView
                     android:id="@+id/tvSalary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$5000 / month"
-                    android:textSize="13sp"
+                    android:text="$5000/m"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#2E7D32"
-                    android:background="@drawable/bg_tag_salary"
+                    android:textColor="#10B981"
+                    android:background="@drawable/tag_salary_background"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
                     android:paddingTop="6dp"
@@ -109,8 +150,8 @@
                     android:text="Full-Time"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#6C63FF"
-                    android:background="@drawable/bg_tag_job_type"
+                    android:textColor="#3B82F6"
+                    android:background="@drawable/tag_job_type_background"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
                     android:paddingTop="6dp"
@@ -122,63 +163,90 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#EEEEEE"
+            android:background="#E5E5E5"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp" />
 
-        <!-- ================= BOTTOM SECTION ================= -->
         <!-- ================= BOTTOM SECTION ================= -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp"
+            android:paddingTop="16dp">
 
-            <!-- Requirements -->
-            <TextView
-                android:id="@+id/tvRequirementsSmall"
+            <!-- Requirements Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Figma • User Research • Wireframing"
-                android:textColor="#616161"
-                android:textSize="13sp"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:orientation="vertical">
 
-            <!-- Remark -->
-            <TextView
-                android:id="@+id/tvAdminNote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Admin note: —"
-                android:textColor="#9E9E9E"
-                android:textSize="12sp"
-                android:layout_marginTop="6dp"
-                android:maxLines="2"
-                android:ellipsize="end"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Requirements:"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
 
-            <!-- ACTION ROW -->
+                <TextView
+                    android:id="@+id/tvRequirementsSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Figma • User Research • Wireframing"
+                    android:textColor="#333333"
+                    android:textSize="13sp"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
+            <!-- Admin Note / Remark -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end"
-                android:layout_marginTop="12dp">
+                android:background="@drawable/admin_note_background"
+                android:padding="12dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/btnWithdraw"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="Delete"
-                    android:textAllCaps="false"
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_info"
+                    app:tint="#7C6FDC" />
+
+                <TextView
+                    android:id="@+id/tvAdminNote"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Admin note: —"
+                    android:textColor="#666666"
                     android:textSize="13sp"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="#E53935"
-                    app:cornerRadius="18dp"/>
+                    android:layout_marginStart="8dp"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
             </LinearLayout>
 
-        </LinearLayout>
+            <!-- ACTION BUTTON -->
+            <Button
+                android:id="@+id/btnWithdraw"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Delete Application"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_danger_background"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"/>
 
+        </LinearLayout>
 
         <!-- ================= ACCENT BAR ================= -->
         <View

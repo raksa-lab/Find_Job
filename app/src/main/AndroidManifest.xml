@@ -2,19 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- REQUIRED -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- 🔥 REQUIRED FOR OPENING PDF ON ANDROID 11+ -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/pdf" />
+        </intent>
+    </queries>
 
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_companylogo_round"
+        android:icon="@mipmap/ic_logo_find_job"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_companylogo_round_round"
+        android:roundIcon="@mipmap/ic_logo_find_job_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Find_Job">
-    <activity
+
+        <activity
             android:name=".Auth.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -31,28 +41,42 @@
             android:name=".MainActivity"
             android:exported="true" />
 
-        <!-- Job Detail Screen -->
         <activity
             android:name=".ui.job_detail.JobDetailActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.jobs.AddJobActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.saved.SavedJobsActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.profile.edit.EditProfileActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.profile.cv.MyCvActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.admin.users.AdminUserListActivity"
             android:exported="false" />
 
-
-
+        <activity
+            android:name=".ui.admin.application.AdminApplicationDetailActivity"
+            android:exported="false" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

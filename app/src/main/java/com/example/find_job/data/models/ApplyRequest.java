@@ -1,11 +1,19 @@
 package com.example.find_job.data.models;
 
-public class ApplyRequest {
-    public String coverLetter;
-    public String additionalInfo;
+import java.util.HashMap;
+import java.util.Map;
 
-    public ApplyRequest(String coverLetter, String additionalInfo) {
+public class ApplyRequest {
+
+    public String coverLetter;
+    public Map<String, String> notes;
+
+    public ApplyRequest(String coverLetter, String userNote) {
         this.coverLetter = coverLetter;
-        this.additionalInfo = additionalInfo;
+
+        if (userNote != null && !userNote.trim().isEmpty()) {
+            notes = new HashMap<>();
+            notes.put("userNotes", userNote);
+        }
     }
 }

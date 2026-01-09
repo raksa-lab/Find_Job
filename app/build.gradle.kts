@@ -53,7 +53,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     // Firebase BOM (controls versions)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 // Firebase Auth
     implementation("com.google.firebase:firebase-auth")
 

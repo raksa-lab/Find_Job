@@ -44,7 +44,6 @@ public class JobListFragment extends Fragment {
 
     private final List<Job> allJobs = new ArrayList<>();
 
-    // ===== ADMIN DELETE MODE =====
     private boolean deleteMode = false;
 
     @Nullable
@@ -74,7 +73,6 @@ public class JobListFragment extends Fragment {
         sessionManager = new SessionManager(requireContext());
         jobRepository = new JobRepository(requireContext());
 
-        // Hide delete button for normal user
         if (!sessionManager.isAdmin()) {
             btnDelete.setVisibility(View.GONE);
         }
@@ -82,9 +80,6 @@ public class JobListFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity())
                 .get(JobListViewModel.class);
 
-        // =============================
-        // OBSERVE JOB LIST
-        // =============================
         viewModel.getJobs().observe(getViewLifecycleOwner(), jobs -> {
             if (jobs == null) return;
 
@@ -98,26 +93,19 @@ public class JobListFragment extends Fragment {
             );
         });
 
-        // =============================
-        // CHIP FILTER
-        // =============================
         chipGroup.setOnCheckedChangeListener(
                 (group, checkedId) ->
                         filterJobs(searchJob.getText().toString())
         );
 
-        // =============================
-        // SEARCH FILTER
-        // =============================
         searchJob.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterJobs(s.toString());
             }
-
-            @Override public void afterTextChanged(Editable s) {}
         });
 
         setupDeleteButton();
@@ -131,7 +119,7 @@ public class JobListFragment extends Fragment {
     }
 
     // =================================================
-    // SEARCH + CHIP FILTER (COMBINED)
+    // FILTER
     // =================================================
     private void filterJobs(String keyword) {
 
@@ -169,12 +157,10 @@ public class JobListFragment extends Fragment {
         }
 
         jobAdapter = new JobAdapter(
-                requireContext(),     // ✅ Context
-                filtered,             // ✅ Job list
-                this::openJobDetail   // ✅ Card click
+                requireContext(),
+                filtered,
+                this::openJobDetail
         );
-
-
 
         if (deleteMode) {
             jobAdapter.enableSelection(true);
@@ -184,7 +170,7 @@ public class JobListFragment extends Fragment {
     }
 
     // =================================================
-    // DELETE BUTTON (ADMIN)
+    // DELETE (ADMIN)
     // =================================================
     private void setupDeleteButton() {
 
@@ -192,7 +178,6 @@ public class JobListFragment extends Fragment {
 
             if (jobAdapter == null) return;
 
-            // ENTER DELETE MODE
             if (!deleteMode) {
                 deleteMode = true;
                 jobAdapter.enableSelection(true);
@@ -204,7 +189,6 @@ public class JobListFragment extends Fragment {
                 return;
             }
 
-            // CONFIRM DELETE
             List<String> selected = jobAdapter.getSelectedJobIds();
 
             if (selected.isEmpty()) {
@@ -235,22 +219,40 @@ public class JobListFragment extends Fragment {
     }
 
     // =================================================
-    // OPEN DETAIL
+    // 🔥 FIXED: OPEN DETAIL (FULL DATA)
     // =================================================
     private void openJobDetail(Job job) {
 
         if (deleteMode) return;
 
         Intent i = new Intent(getActivity(), JobDetailActivity.class);
+
+        // BASIC
         i.putExtra("jobId", job.id);
         i.putExtra("title", job.title);
         i.putExtra("company", job.company);
         i.putExtra("location", job.location);
         i.putExtra("description", job.description);
         i.putExtra("salary", job.salary);
+
+        // TYPES
         i.putExtra("employmentType", job.employmentType);
+        i.putExtra("experienceLevel", job.experienceLevel);
+        i.putExtra("remote", job.remote);
         i.putExtra("status", job.status);
 
+        // COUNTS
+        i.putExtra("applicantsCount", job.applicantsCount);
+
+        // LOGO
+        i.putExtra("companyLogo", job.companyLogo);
+
+        // TIMESTAMP (SAFE)
+        if (job.createdAt != null) {
+            i.putExtra("createdAtSeconds", job.createdAt._seconds);
+        }
+
+        // LIST DATA
         if (job.requirements != null) {
             i.putStringArrayListExtra(
                     "requirements",
@@ -258,8 +260,23 @@ public class JobListFragment extends Fragment {
             );
         }
 
+        if (job.skills != null) {
+            i.putStringArrayListExtra(
+                    "skills",
+                    new ArrayList<>(job.skills)
+            );
+        }
+
+        if (job.benefits != null) {
+            i.putStringArrayListExtra(
+                    "benefits",
+                    new ArrayList<>(job.benefits)
+            );
+        }
+
         startActivity(i);
     }
+
 
     // =================================================
     // CHIP KEYWORDS

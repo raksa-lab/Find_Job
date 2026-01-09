@@ -4,79 +4,202 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="12dp">
+    android:layout_margin="16dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <TextView
-            android:id="@+id/tvJobTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Job Title"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tvCompany"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Company"
-            android:textColor="#666"
-            android:layout_marginTop="4dp"/>
-
-        <TextView
-            android:id="@+id/tvUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Applicant"
-            android:layout_marginTop="4dp"/>
-
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="pending"
-            android:textStyle="bold"
-            android:layout_marginTop="6dp"/>
-
+        <!-- HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginTop="12dp">
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/job_icon_background"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_briefcase"
+                    app:tint="#7C6FDC"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tvJobTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Job Title"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#1A1A1A"/>
+
+                <TextView
+                    android:id="@+id/tvCompany"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Company"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- USER -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_person"
+                app:tint="#999999"/>
+
+            <TextView
+                android:id="@+id/tvUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Applicant Name"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- STATUS -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pending"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:background="@drawable/status_badge_background"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:layout_marginTop="12dp"/>
+
+        <!-- USER MESSAGE -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User message"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#111"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/tvUserNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No message from user"
+            android:textSize="13sp"
+            android:textColor="#555"
+            android:layout_marginTop="4dp"/>
+
+        <!-- ADMIN REPLY -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Admin reply"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#111"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/tvAdminReply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No reply yet"
+            android:textSize="13sp"
+            android:textColor="#555"
+            android:layout_marginTop="4dp"/>
+
+        <!-- DIVIDER -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E5E5E5"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- ACTION BUTTONS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnReply"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Reply"
+                android:textColor="#7C6FDC"
+                android:textStyle="bold"
+                android:background="@drawable/button_outline_background"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"/>
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Delete"
+                android:textColor="#666666"
+                android:textStyle="bold"
+                android:background="@drawable/button_outline_background"
+                android:layout_marginStart="8dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"/>
 
             <Button
                 android:id="@+id/btnReject"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:text="Reject"
-                android:backgroundTint="@android:color/holo_red_light"
-                android:textColor="@android:color/white"/>
+                android:textColor="#EF4444"
+                android:textStyle="bold"
+                android:background="@drawable/button_outline_red_background"
+                android:layout_marginStart="8dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"/>
 
             <Button
                 android:id="@+id/btnApprove"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:text="Approve"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:textColor="@android:color/white"/>
-            <Button
-                android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Delete"
                 android:textColor="@android:color/white"
-                android:backgroundTint="@color/black"
-                android:layout_marginStart="8dp" />
-
+                android:textStyle="bold"
+                android:background="@drawable/button_primary_background"
+                android:layout_marginStart="8dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"/>
         </LinearLayout>
 
     </LinearLayout>

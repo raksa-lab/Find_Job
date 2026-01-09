@@ -2,13 +2,16 @@ package com.example.find_job.ui.application;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,9 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.find_job.Auth.LoginActivity;
 import com.example.find_job.R;
 import com.example.find_job.adapters.AppliedJobsAdapter;
+import com.example.find_job.data.models.AppliedJob;
 import com.example.find_job.utils.SessionManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppliedJobsFragment extends Fragment {
 
@@ -27,6 +32,9 @@ public class AppliedJobsFragment extends Fragment {
     private TextView tvEmpty;
     private AppliedJobsViewModel viewModel;
     private AppliedJobsAdapter adapter;
+
+    // SINGLE SOURCE OF TRUTH
+    private final List<AppliedJob> appliedJobs = new ArrayList<>();
 
     @Override
     public void onStart() {
@@ -56,10 +64,13 @@ public class AppliedJobsFragment extends Fragment {
         viewModel = new ViewModelProvider(this)
                 .get(AppliedJobsViewModel.class);
 
+        // ✅ FIXED CONSTRUCTOR (LifecycleOwner added)
         adapter = new AppliedJobsAdapter(
                 requireContext(),
-                new ArrayList<>(),
-                viewModel
+                getViewLifecycleOwner(),   // 🔥 REQUIRED
+                appliedJobs,
+                viewModel,
+                this::openNotesDialog
         );
 
         rv.setAdapter(adapter);
@@ -69,25 +80,90 @@ public class AppliedJobsFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.reload();
+    }
+
+    // =====================================================
+    // OBSERVE DATA
+    // =====================================================
     private void observeData() {
         viewModel.getAppliedJobs()
                 .observe(getViewLifecycleOwner(), list -> {
 
+                    Log.d("APPLIED_JOBS",
+                            "Received list size = " + (list == null ? 0 : list.size()));
+
                     if (list == null || list.isEmpty()) {
                         tvEmpty.setVisibility(View.VISIBLE);
                         rv.setVisibility(View.GONE);
+                        appliedJobs.clear();
+                        adapter.notifyDataSetChanged();
                         return;
                     }
 
                     tvEmpty.setVisibility(View.GONE);
                     rv.setVisibility(View.VISIBLE);
 
-                    adapter = new AppliedJobsAdapter(
-                            requireContext(),
-                            list,
-                            viewModel
+                    appliedJobs.clear();
+                    appliedJobs.addAll(list);
+                    adapter.notifyDataSetChanged();
+                });
+    }
+
+    // =====================================================
+    // NOTES DIALOG
+    // =====================================================
+    private void openNotesDialog(String applicationId) {
+
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_application_notes, null);
+
+        EditText etUserNote = dialogView.findViewById(R.id.etUserNote);
+        TextView tvAdminNotes = dialogView.findViewById(R.id.tvAdminNotes);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Application Notes")
+                .setView(dialogView)
+                .setPositiveButton("Save", null)
+                .setNegativeButton("Close", null)
+                .create();
+
+        dialog.show();
+
+        viewModel.getApplicationNotes(applicationId)
+                .observe(getViewLifecycleOwner(), response -> {
+
+                    if (response == null || response.getNotes() == null) return;
+
+                    etUserNote.setText(response.getNotes().getUserNotes());
+
+                    if (response.getNotes().getAdminNotes() == null
+                            || response.getNotes().getAdminNotes().isEmpty()) {
+                        tvAdminNotes.setText("No admin notes");
+                    } else {
+                        StringBuilder sb = new StringBuilder();
+                        for (String note : response.getNotes().getAdminNotes()) {
+                            sb.append("• ").append(note).append("\n\n");
+                        }
+                        tvAdminNotes.setText(sb.toString());
+                    }
+
+                    boolean canEdit = response.canRespond();
+                    etUserNote.setEnabled(canEdit);
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                            .setEnabled(canEdit);
+                });
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    viewModel.updateUserNote(
+                            applicationId,
+                            etUserNote.getText().toString()
                     );
-                    rv.setAdapter(adapter);
+                    dialog.dismiss();
                 });
     }
 }

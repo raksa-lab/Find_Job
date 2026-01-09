@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:attr/colorBackground">
+
+    <!-- User Note Section -->
+    <TextView
+        android:id="@+id/tvUserNoteLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Note"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:labelFor="@id/etUserNote"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etUserNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="120dp"
+            android:gravity="top|start"
+            android:hint="Write your note"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="6"
+            android:scrollbars="vertical"
+            android:textSize="14sp"
+            android:importantForAutofill="no"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:background="?android:attr/listDivider"/>
+
+    <!-- Admin Notes Section -->
+    <TextView
+        android:id="@+id/tvAdminNotesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Admin Notes"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="?android:attr/textColorPrimary"/>
+
+    <TextView
+        android:id="@+id/tvAdminNotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="No admin notes"
+        android:textSize="14sp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:minHeight="48dp"/>
+
+</LinearLayout>

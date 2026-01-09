@@ -1,18 +1,22 @@
 package com.example.find_job.ui.admin;
 
-
 import android.os.Bundle;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.*;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.find_job.R;
-import com.example.find_job.ui.admin.AdminApplicationsAdapter;
 import com.example.find_job.data.models.AdminApplication;
 
 public class AdminApplicationsFragment extends Fragment {
@@ -33,17 +37,20 @@ public class AdminApplicationsFragment extends Fragment {
         rv = v.findViewById(R.id.rvApplications);
         tvEmpty = v.findViewById(R.id.tvEmptyState);
 
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         viewModel = new ViewModelProvider(this)
                 .get(AdminApplicationsViewModel.class);
 
-        observe();
+        observeApplications();
 
         return v;
     }
 
-    private void observe() {
+    // ===============================
+    // OBSERVE APPLICATIONS
+    // ===============================
+    private void observeApplications() {
         viewModel.getApplications()
                 .observe(getViewLifecycleOwner(), list -> {
 
@@ -63,12 +70,17 @@ public class AdminApplicationsFragment extends Fragment {
 
                                 @Override
                                 public void onApprove(AdminApplication app) {
-                                    update(app.id, "accepted");
+                                    showUpdateDialog(app, "accepted");
                                 }
 
                                 @Override
                                 public void onReject(AdminApplication app) {
-                                    update(app.id, "rejected");
+                                    showUpdateDialog(app, "rejected");
+                                }
+
+                                @Override
+                                public void onReply(AdminApplication app) {
+                                    showReplyDialog(app); // ✅ FIXED
                                 }
 
                                 @Override
@@ -80,27 +92,102 @@ public class AdminApplicationsFragment extends Fragment {
                 });
     }
 
-    private void update(String id, String status) {
-        viewModel.updateStatus(id, status)
+    // ===============================
+    // ADMIN REPLY (additionalInfo)
+    // ===============================
+    private void showReplyDialog(AdminApplication app) {
+
+        EditText etReply = new EditText(requireContext());
+        etReply.setHint("Reply to applicant");
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Reply to Applicant")
+                .setView(etReply)
+                .setPositiveButton("Send", (d, w) -> {
+
+                    String reply = etReply.getText().toString().trim();
+
+                    if (reply.isEmpty()) {
+                        Toast.makeText(
+                                requireContext(),
+                                "Reply cannot be empty",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return;
+                    }
+
+                    viewModel.replyToUser(app.id, reply)
+                            .observe(getViewLifecycleOwner(), ok -> {
+
+                                Toast.makeText(
+                                        requireContext(),
+                                        ok ? "Reply sent" : "Failed to send reply",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                if (ok) observeApplications();
+                            });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    // ===============================
+    // UPDATE STATUS
+    // ===============================
+    private void showUpdateDialog(
+            AdminApplication app,
+            String status
+    ) {
+        EditText etNote = new EditText(requireContext());
+        etNote.setHint("Internal note (optional)");
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Update Application")
+                .setView(etNote)
+                .setPositiveButton("Submit", (dialog, which) -> {
+                    update(
+                            app.id,
+                            status,
+                            etNote.getText().toString().trim()
+                    );
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void update(
+            String id,
+            String status,
+            String note
+    ) {
+        viewModel.updateStatus(id, status, note)
                 .observe(getViewLifecycleOwner(), ok -> {
+
                     Toast.makeText(
-                            getContext(),
-                            ok ? "Updated" : "Failed",
+                            requireContext(),
+                            ok ? "Application updated" : "Update failed",
                             Toast.LENGTH_SHORT
                     ).show();
-                    if (ok) observe();
+
+                    if (ok) observeApplications();
                 });
     }
 
+    // ===============================
+    // DELETE APPLICATION
+    // ===============================
     private void delete(String id) {
         viewModel.deleteApplication(id)
                 .observe(getViewLifecycleOwner(), ok -> {
+
                     Toast.makeText(
-                            getContext(),
-                            ok ? "Deleted" : "Delete failed",
+                            requireContext(),
+                            ok ? "Application deleted" : "Delete failed",
                             Toast.LENGTH_SHORT
                     ).show();
-                    if (ok) observe();
+
+                    if (ok) observeApplications();
                 });
     }
 }

@@ -14,8 +14,8 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginBottom="56dp"/>
+        android:layout_marginTop="128dp"
+        android:layout_marginBottom="78dp"/>
 
     <!-- BOTTOM NAV -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

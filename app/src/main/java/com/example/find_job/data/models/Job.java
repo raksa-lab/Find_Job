@@ -24,6 +24,8 @@ public class Job {
     public List<String> skills = new ArrayList<>();
     public List<String> tags = new ArrayList<>();
 
+    public String companyLogo; // ✅ MISSING FIELD (CRITICAL)
+
     public String createdBy;
     public int applicantsCount;
     public int views;
@@ -37,3 +39,4 @@ public class Job {
         public long _nanoseconds;
     }
 }
+

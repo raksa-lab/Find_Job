@@ -7,11 +7,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.find_job.data.api.AdminApplicationApiService;
 import com.example.find_job.data.models.AdminApplication;
+import com.example.find_job.data.models.AdminApplicationDetailResponse;
 import com.example.find_job.data.models.AdminApplicationsResponse;
 import com.example.find_job.data.models.AdminUpdateStatusRequest;
+import com.example.find_job.data.models.BaseResponse;
 import com.example.find_job.data.service.RetrofitClient;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,9 +31,9 @@ public class AdminApplicationRepository {
                 .create(AdminApplicationApiService.class);
     }
 
-    // ===============================
-    // LOAD ADMIN APPLICATIONS
-    // ===============================
+    // =====================================================
+    // GET ALL APPLICATIONS (ADMIN LIST)
+    // =====================================================
     public LiveData<List<AdminApplication>> getApplications() {
 
         MutableLiveData<List<AdminApplication>> result = new MutableLiveData<>();
@@ -41,7 +45,10 @@ public class AdminApplicationRepository {
                             Call<AdminApplicationsResponse> call,
                             Response<AdminApplicationsResponse> response
                     ) {
-                        if (response.isSuccessful() && response.body() != null) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().applications != null) {
+
                             result.setValue(response.body().applications);
                         } else {
                             result.setValue(null);
@@ -60,13 +67,62 @@ public class AdminApplicationRepository {
         return result;
     }
 
-    public LiveData<Boolean> deleteApplication(String id) {
+    // =====================================================
+    // GET APPLICATION DETAIL
+    // =====================================================
+    public LiveData<AdminApplication> getApplicationDetail(String id) {
+
+        MutableLiveData<AdminApplication> result = new MutableLiveData<>();
+
+        api.getApplicationDetail(id)
+                .enqueue(new Callback<AdminApplicationDetailResponse>() {
+                    @Override
+                    public void onResponse(
+                            Call<AdminApplicationDetailResponse> call,
+                            Response<AdminApplicationDetailResponse> response
+                    ) {
+                        if (response.isSuccessful()
+                                && response.body() != null) {
+
+                            result.setValue(response.body().application);
+                        } else {
+                            result.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<AdminApplicationDetailResponse> call,
+                            Throwable t
+                    ) {
+                        result.setValue(null);
+                    }
+                });
+
+        return result;
+    }
+
+    // =====================================================
+    // UPDATE APPLICATION STATUS (INTERNAL NOTE)
+    // NOT VISIBLE TO USER
+    // =====================================================
+    public LiveData<Boolean> updateStatus(
+            String applicationId,
+            String status,
+            String internalNote
+    ) {
 
         MutableLiveData<Boolean> result = new MutableLiveData<>();
 
-        api.deleteApplication(id)
-                .enqueue(new retrofit2.Callback<Void>() {
+        AdminUpdateStatusRequest body =
+                new AdminUpdateStatusRequest(
+                        status,
+                        internalNote,
+                        false
+                );
 
+        api.updateApplicationStatus(applicationId, body)
+                .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(
                             Call<Void> call,
@@ -87,18 +143,55 @@ public class AdminApplicationRepository {
         return result;
     }
 
-
-    // ===============================
-    // UPDATE STATUS
-    // ===============================
-    public LiveData<Boolean> updateStatus(String id, String status) {
+    // =====================================================
+    // ADMIN → USER REPLY (additionalInfo)
+    // ✅ CORRECT ENDPOINT
+    // =====================================================
+    public LiveData<Boolean> replyToUser(
+            String applicationId,
+            String adminReply
+    ) {
 
         MutableLiveData<Boolean> result = new MutableLiveData<>();
 
-        AdminUpdateStatusRequest body =
-                new AdminUpdateStatusRequest(status);
+        Map<String, Object> body = new HashMap<>();
 
-        api.updateApplicationStatus(id, body)
+        Map<String, Object> notes = new HashMap<>();
+        notes.put("adminNotes", List.of(adminReply));
+
+        body.put("notes", notes);
+
+
+        api.replyToUser(applicationId, body)
+                .enqueue(new Callback<BaseResponse>() {
+                    @Override
+                    public void onResponse(
+                            Call<BaseResponse> call,
+                            Response<BaseResponse> response
+                    ) {
+                        result.setValue(response.isSuccessful());
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<BaseResponse> call,
+                            Throwable t
+                    ) {
+                        result.setValue(false);
+                    }
+                });
+
+        return result;
+    }
+
+    // =====================================================
+    // DELETE APPLICATION
+    // =====================================================
+    public LiveData<Boolean> deleteApplication(String applicationId) {
+
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+
+        api.deleteApplication(applicationId)
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(

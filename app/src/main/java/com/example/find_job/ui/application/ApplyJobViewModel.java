@@ -35,9 +35,18 @@ public class ApplyJobViewModel extends AndroidViewModel {
     }
 
     // ===============================
-    // APPLY JOB  ✅ FIXED
+    // APPLY JOB (USER → ADMIN NOTE)
+    // coverLetter = user message
+    // additionalInfo = MUST be null
     // ===============================
-    public LiveData<Boolean> apply(String jobId, String coverLetter) {
-        return applicationRepo.apply(jobId, coverLetter);
+    public LiveData<Boolean> apply(
+            String jobId,
+            String coverLetter
+    ) {
+        return applicationRepo.apply(
+                jobId,
+                coverLetter,
+                null // IMPORTANT: user CANNOT send admin reply
+        );
     }
 }
