@@ -101,43 +101,20 @@
             android:paddingBottom="6dp"
             android:layout_marginTop="12dp"/>
 
-        <!-- USER MESSAGE -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="User message"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="#111"
-            android:layout_marginTop="12dp"/>
+
 
         <TextView
             android:id="@+id/tvUserNote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No message from user"
-            android:textSize="13sp"
-            android:textColor="#555"
-            android:layout_marginTop="4dp"/>
+            android:layout_width="0dp"
+            android:layout_height="0dp"/>
 
-        <!-- ADMIN REPLY -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Admin reply"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="#111"
-            android:layout_marginTop="16dp"/>
+
 
         <TextView
             android:id="@+id/tvAdminReply"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No reply yet"
-            android:textSize="13sp"
-            android:textColor="#555"
-            android:layout_marginTop="4dp"/>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            />
 
         <!-- DIVIDER -->
         <View
@@ -147,59 +124,68 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"/>
 
-        <!-- ACTION BUTTONS -->
+        <!-- ACTION BUTTONS - ROW BY ROW -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnReply"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="Reply"
-                android:textColor="#7C6FDC"
-                android:textStyle="bold"
-                android:background="@drawable/button_outline_background"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"/>
+            <!-- First Row: Reply and Delete -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="Delete"
-                android:textColor="#666666"
-                android:textStyle="bold"
-                android:background="@drawable/button_outline_background"
-                android:layout_marginStart="8dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"/>
+                <Button
+                    android:id="@+id/btnReply"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Reply"
+                    android:textColor="#7C6FDC"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_outline_background"
+                    android:layout_marginEnd="8dp"/>
 
-            <Button
-                android:id="@+id/btnReject"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="Reject"
-                android:textColor="#EF4444"
-                android:textStyle="bold"
-                android:background="@drawable/button_outline_red_background"
-                android:layout_marginStart="8dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"/>
+                <Button
+                    android:id="@+id/btnDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Delete"
+                    android:textColor="#666666"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_outline_background"/>
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/btnApprove"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="Approve"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:background="@drawable/button_primary_background"
-                android:layout_marginStart="8dp"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"/>
+            <!-- Second Row: Reject and Approve -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/btnReject"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Reject"
+                    android:textColor="#EF4444"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_outline_red_background"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/btnApprove"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Approve"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_primary_background"/>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

@@ -21,11 +21,8 @@ import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -74,21 +71,32 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this)
                 .get(AdminApplicationDetailViewModel.class);
 
-        viewModel.load(applicationId)
-                .observe(this, this::bindData);
+        loadData();
 
         btnReply.setOnClickListener(v -> showReplyDialog());
     }
 
     // =====================================================
-    // BIND DATA
+    // LOAD DATA
+    // =====================================================
+    private void loadData() {
+        viewModel.load(applicationId)
+                .observe(this, this::bindData);
+    }
+
+    // =====================================================
+    // BIND DATA (FINAL & CORRECT)
     // =====================================================
     private void bindData(AdminApplication app) {
         if (app == null) return;
 
         // JOB TITLE
         tvJobTitle.setText(
-                app.jobTitle != null ? app.jobTitle : "—"
+                app.jobTitle != null
+                        ? app.jobTitle
+                        : app.job != null
+                        ? app.job.title
+                        : "—"
         );
 
         // STATUS
@@ -98,14 +106,23 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
                         : "—"
         );
 
-        // USER NOTE (coverLetter)
-        if (app.coverLetter != null && !app.coverLetter.trim().isEmpty()) {
-            tvUserNote.setText(app.coverLetter);
-        } else {
-            tvUserNote.setText("No message from user");
-        }
+        // USER MESSAGE
+        tvUserNote.setText(
+                app.coverLetter != null && !app.coverLetter.trim().isEmpty()
+                        ? app.coverLetter
+                        : "No message from user"
+        );
 
+        // =========================
+        // ✅ ADMIN REPLY (LATEST)
+        // =========================
+        String adminReply = app.getAdminReply();
 
+        tvAdminReply.setText(
+                adminReply != null && !adminReply.trim().isEmpty()
+                        ? adminReply
+                        : "No reply yet"
+        );
 
         // VIEW CV
         if (app.resumeUrl != null && !app.resumeUrl.isEmpty()) {
@@ -149,9 +166,7 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
                                             "Reply sent",
                                             Toast.LENGTH_SHORT
                                     ).show();
-
-                                    // Reload data
-                                    viewModel.load(applicationId);
+                                    loadData(); // reload after reply
                                 } else {
                                     Toast.makeText(
                                             this,
@@ -166,7 +181,7 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
     }
 
     // =====================================================
-    // DOWNLOAD CV WITH AUTH
+    // DOWNLOAD & OPEN CV
     // =====================================================
     private void downloadAndOpenPdf(String resumePath) {
 
@@ -183,10 +198,10 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
 
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
                 runOnUiThread(() ->
                         Toast.makeText(
                                 AdminApplicationDetailActivity.this,
@@ -197,41 +212,26 @@ public class AdminApplicationDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(Call call, Response response) {
-                if (!response.isSuccessful() || response.body() == null) {
-                    runOnUiThread(() ->
-                            Toast.makeText(
-                                    AdminApplicationDetailActivity.this,
-                                    "CV not found",
-                                    Toast.LENGTH_SHORT
-                            ).show()
-                    );
-                    return;
-                }
-
+            public void onResponse(okhttp3.Call call, Response response) {
                 try {
-                    File pdfFile = new File(
+                    File pdf = new File(
                             getCacheDir(),
                             "resume_" + System.currentTimeMillis() + ".pdf"
                     );
 
-                    InputStream inputStream =
-                            response.body().byteStream();
-                    FileOutputStream outputStream =
-                            new FileOutputStream(pdfFile);
+                    InputStream in = response.body().byteStream();
+                    FileOutputStream out = new FileOutputStream(pdf);
 
                     byte[] buffer = new byte[4096];
-                    int bytesRead;
-
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
+                    int read;
+                    while ((read = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
                     }
 
-                    outputStream.flush();
-                    outputStream.close();
-                    inputStream.close();
+                    out.close();
+                    in.close();
 
-                    openPdf(pdfFile);
+                    openPdf(pdf);
 
                 } catch (Exception e) {
                     runOnUiThread(() ->

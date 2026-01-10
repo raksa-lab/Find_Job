@@ -71,7 +71,7 @@ public class AppliedJobsAdapter
         h.tvJobTitle.setText(
                 applied.jobTitle != null
                         ? applied.jobTitle
-                        : applied.job != null && applied.job.title != null
+                        : applied.job != null
                         ? applied.job.title
                         : "—"
         );
@@ -106,20 +106,16 @@ public class AppliedJobsAdapter
         );
 
         // =========================
-        // HIDE UNUSED
+        // HIDE UNUSED FIELDS
         // =========================
         h.tvSalary.setVisibility(View.GONE);
         h.tvJobType.setVisibility(View.GONE);
         h.tvRequirementsSmall.setVisibility(View.GONE);
 
         // =====================================================
-        // ✅ ADMIN NOTE (USER VISIBLE)
+        // ✅ ADMIN NOTE (FIXED – USER VISIBLE ONLY)
         // =====================================================
         String adminNote = applied.getLatestAdminNote();
-
-        if (adminNote == null) {
-            adminNote = applied.getAdditionalInfoText();
-        }
 
         h.tvAdminNote.setText(
                 adminNote != null
@@ -170,7 +166,7 @@ public class AppliedJobsAdapter
         );
 
         // =========================
-        // OPEN DETAIL
+        // OPEN NOTES POPUP
         // =========================
         h.itemView.setOnClickListener(v ->
                 noteClickListener.onNoteClick(applied.id)

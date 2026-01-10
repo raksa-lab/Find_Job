@@ -21,32 +21,16 @@ public class AdminApplicationDetailViewModel
         repository = new AdminApplicationRepository(app);
     }
 
-    // =====================================================
-    // LOAD APPLICATION DETAIL
-    // =====================================================
+    // LOAD APPLICATION
     public LiveData<AdminApplication> load(String id) {
         return repository.getApplicationDetail(id);
     }
 
-    // =====================================================
     // ADMIN → USER REPLY
-    // Writes to `additionalInfo`
-    // =====================================================
     public LiveData<Boolean> replyToUser(
             String applicationId,
             String adminReply
     ) {
         return repository.replyToUser(applicationId, adminReply);
-    }
-
-    // =====================================================
-    // UPDATE APPLICATION STATUS (OPTIONAL)
-    // =====================================================
-    public LiveData<Boolean> updateStatus(
-            String applicationId,
-            String status,
-            String internalNote
-    ) {
-        return repository.updateStatus(applicationId, status, internalNote);
     }
 }

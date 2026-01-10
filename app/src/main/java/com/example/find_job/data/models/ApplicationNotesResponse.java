@@ -17,15 +17,21 @@ public class ApplicationNotesResponse {
         return canRespond;
     }
 
+    // =========================
+    // NOTES
+    // =========================
     public static class Notes {
+
         private String userNotes;
-        private List<String> adminNotes;
+
+        // 🔥 MUST match backend structure
+        private List<AppliedJob.AdminNote> adminNotes;
 
         public String getUserNotes() {
             return userNotes == null ? "" : userNotes;
         }
 
-        public List<String> getAdminNotes() {
+        public List<AppliedJob.AdminNote> getAdminNotes() {
             return adminNotes;
         }
     }

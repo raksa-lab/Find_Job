@@ -21,6 +21,7 @@ import com.example.find_job.Auth.LoginActivity;
 import com.example.find_job.R;
 import com.example.find_job.adapters.AppliedJobsAdapter;
 import com.example.find_job.data.models.AppliedJob;
+import com.example.find_job.data.models.ApplicationNotesResponse;
 import com.example.find_job.utils.SessionManager;
 
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ public class AppliedJobsFragment extends Fragment {
     private AppliedJobsViewModel viewModel;
     private AppliedJobsAdapter adapter;
 
-    // SINGLE SOURCE OF TRUTH
     private final List<AppliedJob> appliedJobs = new ArrayList<>();
 
     @Override
@@ -64,17 +64,15 @@ public class AppliedJobsFragment extends Fragment {
         viewModel = new ViewModelProvider(this)
                 .get(AppliedJobsViewModel.class);
 
-        // ✅ FIXED CONSTRUCTOR (LifecycleOwner added)
         adapter = new AppliedJobsAdapter(
                 requireContext(),
-                getViewLifecycleOwner(),   // 🔥 REQUIRED
+                getViewLifecycleOwner(),
                 appliedJobs,
                 viewModel,
                 this::openNotesDialog
         );
 
         rv.setAdapter(adapter);
-
         observeData();
 
         return view;
@@ -86,15 +84,15 @@ public class AppliedJobsFragment extends Fragment {
         viewModel.reload();
     }
 
-    // =====================================================
-    // OBSERVE DATA
-    // =====================================================
+    // =========================
+    // DATA
+    // =========================
     private void observeData() {
         viewModel.getAppliedJobs()
                 .observe(getViewLifecycleOwner(), list -> {
 
                     Log.d("APPLIED_JOBS",
-                            "Received list size = " + (list == null ? 0 : list.size()));
+                            "Received size = " + (list == null ? 0 : list.size()));
 
                     if (list == null || list.isEmpty()) {
                         tvEmpty.setVisibility(View.VISIBLE);
@@ -113,9 +111,9 @@ public class AppliedJobsFragment extends Fragment {
                 });
     }
 
-    // =====================================================
-    // NOTES DIALOG
-    // =====================================================
+    // =========================
+    // NOTES POPUP (FIXED)
+    // =========================
     private void openNotesDialog(String applicationId) {
 
         View dialogView = LayoutInflater.from(requireContext())
@@ -136,19 +134,37 @@ public class AppliedJobsFragment extends Fragment {
         viewModel.getApplicationNotes(applicationId)
                 .observe(getViewLifecycleOwner(), response -> {
 
-                    if (response == null || response.getNotes() == null) return;
+                    if (response == null || response.getNotes() == null) {
+                        tvAdminNotes.setText("No admin notes");
+                        return;
+                    }
 
+                    // USER NOTE
                     etUserNote.setText(response.getNotes().getUserNotes());
 
-                    if (response.getNotes().getAdminNotes() == null
-                            || response.getNotes().getAdminNotes().isEmpty()) {
+                    // ADMIN NOTES
+                    List<AppliedJob.AdminNote> notes =
+                            response.getNotes().getAdminNotes();
+
+                    if (notes == null || notes.isEmpty()) {
                         tvAdminNotes.setText("No admin notes");
                     } else {
                         StringBuilder sb = new StringBuilder();
-                        for (String note : response.getNotes().getAdminNotes()) {
-                            sb.append("• ").append(note).append("\n\n");
+
+                        for (AppliedJob.AdminNote note : notes) {
+                            if (note == null) continue;
+                            if (note.isInternal || !note.notifyUser) continue;
+
+                            sb.append("• ")
+                                    .append(note.content)
+                                    .append("\n\n");
                         }
-                        tvAdminNotes.setText(sb.toString());
+
+                        tvAdminNotes.setText(
+                                sb.length() > 0
+                                        ? sb.toString()
+                                        : "No admin notes"
+                        );
                     }
 
                     boolean canEdit = response.canRespond();

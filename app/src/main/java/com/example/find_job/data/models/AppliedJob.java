@@ -55,7 +55,16 @@ public class AppliedJob {
         public boolean isInternal;
         public boolean notifyUser;
         public Timestamp timestamp;
+
+        public boolean isInternal() {
+            return isInternal;
+        }
+
+        public boolean isNotifyUser() {
+            return notifyUser;
+        }
     }
+
 
     // =========================
     // TIMESTAMP MODEL
